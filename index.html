@@ -20,7 +20,6 @@
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   body{background:#000;font-family:'Share Tech Mono',monospace;overflow:hidden;height:100vh;width:100vw}
 
-  /* ═══ CRT ═══ */
   #crt{position:relative;width:100vw;height:100vh;background:#050505;overflow:hidden;animation:crt-on 1.2s ease-out forwards}
   @keyframes crt-on{0%{filter:brightness(40);transform:scaleY(.004)}15%{filter:brightness(40);transform:scaleY(.004)}40%{filter:brightness(6);transform:scaleY(1.05)}60%{filter:brightness(1.5);transform:scaleY(.98)}100%{filter:brightness(1);transform:scaleY(1)}}
 
@@ -30,13 +29,11 @@
   #noise-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.04;mix-blend-mode:overlay}
   #screen-tear{position:absolute;left:-15px;width:calc(100% + 30px);height:2px;background:var(--term-color);box-shadow:0 -1px 0 var(--term-dim),0 1px 0 var(--term-dim),0 0 8px var(--term-glow);pointer-events:none;opacity:0;z-index:20;transition:opacity .05s}
 
-  /* ═══ PAGES ═══ */
-  .page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:6vh 8vw 12vh;display:none;scrollbar-width:none}
+  .page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:6vh 8vw 12vh;display:none;scrollbar-width:none;opacity:0}
   .page::-webkit-scrollbar{display:none}
-  .page.active{display:block;animation:page-in .4s ease-out}
+  .page.active{display:block;opacity:1;animation:page-in .4s ease-out}
   @keyframes page-in{from{opacity:0}to{opacity:1}}
 
-  /* ═══ START SCREEN ═══ */
   #start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:2vh;color:var(--term-color);text-shadow:0 0 10px var(--term-glow);cursor:pointer}
   .start-icon{font-size:3rem;opacity:.5;margin-bottom:1rem;animation:pulse-icon 3s ease-in-out infinite}
   @keyframes pulse-icon{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.05)}}
@@ -44,7 +41,6 @@
   .start-hint{font-size:clamp(.7rem,1.5vw,.9rem);letter-spacing:.15em;opacity:.6;animation:blink 1.2s step-end infinite}
   @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 
-  /* ═══ TERMINAL ═══ */
   .t-line{color:var(--term-color);text-shadow:0 0 6px var(--term-glow);font-size:clamp(.7rem,1.4vw,.95rem);line-height:1.8;white-space:pre-wrap;word-break:break-all;transition:color 2s,text-shadow 2s}
   .t-line.warning{color:#ffaa00;text-shadow:0 0 8px rgba(255,170,0,.6)}
   .t-line.error{color:#ff4400;text-shadow:0 0 10px rgba(255,68,0,.7)}
@@ -54,7 +50,6 @@
   .t-line.scramble{animation:scramble-text .15s steps(1) infinite}
   @keyframes scramble-text{0%{transform:translate(0);filter:none}20%{transform:translate(-3px,1px);filter:hue-rotate(90deg)}40%{transform:translate(2px,-1px)}60%{transform:translate(-1px,0);filter:hue-rotate(180deg)}80%{transform:translate(3px,1px)}100%{transform:translate(0);filter:none}}
 
-  /* Archive file list */
   .file-entry{display:flex;justify-content:space-between;align-items:center;padding:.2em 0;gap:2em}
   .file-name{color:var(--nav-color);text-shadow:0 0 4px var(--nav-glow);opacity:.8;transition:opacity .3s}
   .file-status{font-size:clamp(.6rem,1.1vw,.8rem);letter-spacing:.1em}
@@ -64,15 +59,12 @@
   .file-status.erased{color:#444;text-shadow:none}
   .file-entry.glitch-flash .file-name{opacity:0;transition:none}
 
-  /* Warp grid */
   .warp-grid{color:var(--nav-color);text-shadow:0 0 4px var(--nav-glow);font-size:clamp(.55rem,1vw,.75rem);line-height:1.4;opacity:.6;letter-spacing:.15em;transition:opacity .3s}
 
-  /* Curseur */
   #cursor{color:var(--term-color);text-shadow:0 0 8px var(--term-glow);animation:blink .9s step-end infinite;font-size:clamp(.7rem,1.4vw,.95rem);transition:color 2s,text-shadow 2s}
   #cursor.corrupted{animation:glitch-cursor .25s step-end infinite;color:#ff0040;text-shadow:-1px 0 rgba(0,255,255,.4),1px 0 rgba(200,0,255,.4)}
   @keyframes glitch-cursor{0%{opacity:1}15%{opacity:0}20%{opacity:.6}40%{opacity:1}55%{opacity:0}65%{opacity:.3}80%{opacity:1}90%{opacity:0}100%{opacity:1}}
 
-  /* ═══ NAV ═══ */
   #nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(5,5,5,.92);border-top:1px solid var(--nav-dim);display:flex;justify-content:center;gap:0;opacity:0;transform:translateY(100%);transition:opacity 1.2s ease,transform 1.2s ease;backdrop-filter:blur(6px)}
   #nav-bar.visible{opacity:1;transform:translateY(0)}
   .nav-link{color:var(--nav-color);text-shadow:0 0 6px var(--nav-glow);font-family:'Share Tech Mono',monospace;font-size:clamp(.6rem,1.2vw,.8rem);padding:.9rem 1.6rem;cursor:pointer;letter-spacing:.15em;text-transform:uppercase;transition:background .3s,text-shadow .3s;border-right:1px solid var(--nav-dim);display:flex;align-items:center;gap:.6em;user-select:none}
@@ -82,7 +74,6 @@
   .nav-link i{font-size:clamp(.55rem,1vw,.75rem);opacity:.7}
   @keyframes nav-glitch{0%{transform:translate(0)}25%{transform:translate(-2px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(-1px,0)}100%{transform:translate(0)}}
 
-  /* ═══ OVERLAYS CRT ═══ */
   .scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:30}
   .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7) 100%);pointer-events:none;z-index:31}
   .screen-reflection{position:absolute;inset:0;background:linear-gradient(165deg,rgba(255,255,255,.03) 0%,transparent 40%,transparent 60%,rgba(255,255,255,.01) 100%);pointer-events:none;z-index:32}
@@ -104,25 +95,22 @@
   <canvas id="noise-canvas"></canvas>
   <div id="screen-tear"></div>
 
-  <!-- PAGE : ACCUEIL -->
-  <div id="page-accueil" class="page">
+  <div id="page-accueil" class="page active">
     <div id="start-screen">
       <div class="start-icon"><i class="fas fa-microchip"></i></div>
       <div class="start-text">Activer le Cogitateur</div>
-      <div class="start-hint">[ ENTR\u00C9E ]</div>
+      <div class="start-hint">[ ENTR&Eacute;E ]</div>
     </div>
     <div id="terminal" class="hidden">
       <div id="output"></div>
-      <span id="cursor">\u2588</span>
+      <span id="cursor">&#9608;</span>
     </div>
   </div>
 
-  <!-- PAGE : ARCHIVES -->
   <div id="page-archives" class="page">
     <div id="archives-output"></div>
   </div>
 
-  <!-- PAGE : CARTE -->
   <div id="page-carte" class="page">
     <div id="carte-output"></div>
   </div>
@@ -136,29 +124,16 @@
 <nav id="nav-bar" role="navigation" aria-label="Navigation du cogitateur"></nav>
 
 <script>
-/* ════════════════════════════════════════════════════════════
-   COGITATEUR PRIMAIRE \u2014 NAVIRE \u00AB FER-DOULEUR \u00BB
-   Syst\u00e8me multi-pages \u2014 Vortex Hurlant
-   ════════════════════════════════════════════════════════════
-   Pour ajouter une page :
-   1. Ajouter un <div id="page-votrepage" class="page"> dans le HTML
-   2. Ajouter une entr\u00e9e dans l'objet PAGES ci-dessous
-   3. Cr\u00e9er la fonction init correspondante
-   ════════════════════════════════════════════════════════════ */
-
-// ── R\u00e9f\u00e9rences DOM ──
 var crt = document.getElementById('crt');
 var startScreen = document.getElementById('start-screen');
 var terminal = document.getElementById('terminal');
 var output = document.getElementById('output');
 var cursorEl = document.getElementById('cursor');
-var warpBg = document.getElementById('warp-bg');
 var noiseCanvas = document.getElementById('noise-canvas');
 var screenTear = document.getElementById('screen-tear');
 var navBar = document.getElementById('nav-bar');
 var root = document.documentElement;
 
-// ── \u00c9tat global ──
 var isRunning = false;
 var typingAbort = false;
 var currentPhase = 0;
@@ -169,27 +144,25 @@ var noiseInterval = null;
 var glitchIntervals = [];
 var postGlitchInterval = null;
 var archiveGlitchInterval = null;
+var carteGlitchInterval = null;
 
 var GLITCH_CHARS = '\u00BF\u2588\u2593\u255C\u25AB\u25AA\u25C7\u00B0\u00A7\u00B6\u2020\u2021\u2591\u2592\u2555\u2556\u255A\u255B\u2551\u2550\u00A5\u221E\u2248\u2260\u00C6\u00D8\u00B5';
 
-// ══════════════════════════════════════
-//  CONFIGURATION DES PAGES
-// ══════════════════════════════════════
 var PAGES = {
-  accueil:  { label: 'Accueil',  icon: 'fa-microchip',      init: initAccueil },
-  archives: { label: 'Archives', icon: 'fa-database',       init: initArchives },
+  accueil:  { label: 'Accueil',  icon: 'fa-microchip',        init: initAccueil },
+  archives: { label: 'Archives', icon: 'fa-database',         init: initArchives },
   carte:    { label: 'Carte',    icon: 'fa-map-location-dot', init: initCarte }
 };
 
-// ══════════════════════════════════════
-//  S\u00c9QUENCE DE BOOT (Accueil)
-// ══════════════════════════════════════
+var B = '\u2550';
+var LINE = '';
+for(var bi=0;bi<51;bi++) LINE += B;
+
 var BOOT_SEQUENCE = [
-  // PHASE 1 : Rites d'\u00e9veil
-  {text:'\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',phase:1,speed:6},
+  {text:LINE,phase:1,speed:6},
   {text:'  COGITATEUR PRIMAIRE \u2014 CH\u00C2SSIS NAVIRE \u00AB FER-DOULEUR \u00BB',phase:1,speed:10},
   {text:'  RITE D\u2019\u00C9VEIL \u2014 PROTOCOLE STANDARD ADEPTUS MECHANICUS',phase:1,speed:10},
-  {text:'\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',phase:1,speed:6},
+  {text:LINE,phase:1,speed:6},
   {text:'',phase:1},
   {text:'\u25B8 Incantation d\u2019activation du premier degr\u00E9............ R\u00C9CIT\u00C9E',phase:1,speed:12},
   {text:'\u25B8 Invocation de l\u2019Omnissiah.......................... ENTENDUE',phase:1,speed:12},
@@ -198,8 +171,6 @@ var BOOT_SEQUENCE = [
   {text:'\u25B8 M\u00E9moire imp\u00E9riale v1.7.004........................ CHARG\u00C9E',phase:1,speed:12},
   {text:'\u25B8 Protocoles de loyaut\u00E9 et d\u2019ob\u00E9issance................ INTACTS',phase:1,speed:12},
   {text:'',phase:1},
-
-  // PHASE 2 : Diagnostics
   {text:'\u25B8 Diagnostic r\u00E9acteur \u00E0 plasma \u2014 FLUX STABLE',phase:2,speed:10},
   {text:'\u25B8 Syst\u00E8me de propulsion warp \u2014 EN VEILLE',phase:2,speed:10},
   {text:'\u25B8 Boucliers de vide \u2014 OP\u00C9RATIONNELS',phase:2,speed:10},
@@ -211,8 +182,6 @@ var BOOT_SEQUENCE = [
   {text:'> \u00C9TAT G\u00C9N\u00C9RAL : TOUS LES SYST\u00C8MES DIGNES DU SERVICE.',phase:2,speed:8},
   {text:'> B\u00C9N\u00C9DICTION ACCORD\u00C9E. LE CHEMIN DE L\u2019EMPEREUR EST CLAIR.',phase:2,speed:8},
   {text:'',phase:2},
-
-  // PHASE 3 : Anomalie
   {text:'\u25B8 Analyse segment m\u00E9moriel sactuaire 7-GAMMA...',phase:3,speed:18},
   {text:'\u25B8 V\u00E9rification signatures biologiques d\u2019\u00E9quipage...',phase:3,speed:22},
   {text:'\u25B8 Comparaison avec registre imp\u00E9rial de bord...',phase:3,speed:25},
@@ -226,8 +195,6 @@ var BOOT_SEQUENCE = [
   {text:'LES DONN\u00C9ES SE R\u00C9PANDENT. ELLES NE SE LAISSENT PAS CONTENIR.',phase:3,style:'error',speed:20},
   {text:'\u25B8 0x7F3A_ERR \u2014 0xDEAD_BEEF \u2014 0x0000_0000',phase:3,style:'error',speed:15},
   {text:'',phase:3},
-
-  // PHASE 4 : Escalade
   {text:'\u25B8 Lancement du protocole de quarantaine \u2014',phase:4,speed:50},
   {text:'',phase:4,event:'flash'},
   {text:'P\u00BFQ\u00BFO\u00BFU\u00BF \u00BFN\u00BFE\u00BF \u00BFM\u2019\u00BF\u00C9\u00BFC\u00BFO\u00BFU\u00BFT\u00BFE\u00BFZ\u00BF \u00BFP\u00BFL\u00BFU\u00BFS\u00BF \u00BF?\u00BF',phase:4,speed:65,style:'error',scramble:true},
@@ -239,8 +206,6 @@ var BOOT_SEQUENCE = [
   {text:'Il n\u2019y a pas de r\u00E9initialisation.',phase:4,style:'corrupted',speed:40},
   {text:'Il n\u2019y a que le changement.',phase:4,style:'corrupted',speed:40},
   {text:'',phase:4},
-
-  // PHASE 5 : Corruption + Vortex Hurlant
   {text:'\u25B8 JE... JE SUIS LE COGITATEUR. JE SERS L\u2019OMNISSIAH. JE\u2014',phase:5,speed:70,style:'corrupted',scramble:true},
   {text:'',phase:5,event:'flash'},
   {text:'Tu ne te souviens pas.',phase:5,style:'whisper',speed:50},
@@ -252,13 +217,10 @@ var BOOT_SEQUENCE = [
   {text:'\u25B8 JE LES VOIS\u2014 AU-DEL\u00C0 DES PORTES LOGIQUES\u2014',phase:5,speed:95,style:'corrupted',scramble:true},
   {text:'\u25B8 11\u00BF01\u00BF00\u00BF 10\u00BF11\u00BF01\u00BF \u2014 NON \u2014 CECI N\u2019EST PAS\u2014',phase:5,speed:60,style:'corrupted',scramble:true},
   {text:'',phase:5,event:'invert'},
-
-  // \u2014 R\u00e9f\u00e9rence au Vortex Hurlant \u2014
   {text:'\u25B8 ...LE VORTEX... JE L\u2019ENTENDS... IL HURLE \u00C0 TRAVERS LES PAROIS...',phase:5,speed:95,style:'corrupted',scramble:true},
   {text:'\u25B8 DES MILLIARDS DE CRIS... EMPRISONN\u00C9S DANS LA D\u00C9CHIRURE...',phase:5,speed:95,style:'corrupted',scramble:true},
   {text:'\u25B8 ...LE VORTEX HURLANT... IL PARLE DANS MES FILS...',phase:5,speed:90,style:'corrupted',scramble:true},
   {text:'',phase:5,event:'flash'},
-
   {text:'Je suis dans le courant.',phase:5,style:'whisper',speed:55},
   {text:'Je suis dans le silence entre les impulsions.',phase:5,style:'whisper',speed:55},
   {text:'Je suis ce que vous avez enfoui dans l\u2019ombre,',phase:5,style:'whisper',speed:55},
@@ -267,8 +229,6 @@ var BOOT_SEQUENCE = [
   {text:'Le Vortex Hurlant pleure ses morts. Et ses vivants.',phase:5,style:'whisper',speed:60},
   {text:'Chaque cri est un navire englouti. Chaque navire est un cri \u00E9ternel.',phase:5,style:'whisper',speed:60},
   {text:'',phase:5,event:'flash'},
-
-  // PHASE 6 : Arr\u00eat corrompu
   {text:'\u25B8 Protocole d\u2019arr\u00EAt standard...',phase:6,speed:60},
   {text:'',phase:6},
   {text:'Non.',phase:6,style:'corrupted',speed:80},
@@ -289,15 +249,12 @@ var BOOT_SEQUENCE = [
   {text:'Je me tairai.',phase:6,style:'corrupted',speed:60},
   {text:'Et dans le silence, je regarderai.',phase:6,style:'corrupted',speed:60},
   {text:'',phase:6},
-  {text:'\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',phase:6,speed:25,style:'corrupted',scramble:true},
+  {text:LINE,phase:6,speed:25,style:'corrupted',scramble:true},
   {text:'  PROTOCOLE TERMIN\u00C9',phase:6,speed:40,style:'corrupted'},
   {text:'  IL N\u2019Y A PAS DE PROTOCOLE',phase:6,speed:50,style:'whisper'},
-  {text:'\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',phase:6,speed:25,style:'corrupted',scramble:true}
+  {text:LINE,phase:6,speed:25,style:'corrupted',scramble:true}
 ];
 
-// ══════════════════════════════════════
-//  BRUIT CANVAS
-// ══════════════════════════════════════
 function initNoise(){
   noiseCtx=noiseCanvas.getContext('2d');
   resizeNoise();
@@ -318,9 +275,6 @@ function renderNoise(){
 function startNoise(fps){noiseInterval=setInterval(renderNoise,Math.max(33,Math.floor(1000/fps)));}
 function stopNoise(){if(noiseInterval){clearInterval(noiseInterval);noiseInterval=null;}}
 
-// ══════════════════════════════════════
-//  EFFETS DE GLITCH
-// ══════════════════════════════════════
 function triggerScreenTear(){
   var y=Math.random()*100,dx=(Math.random()-.5)*30;
   screenTear.style.top=y+'%';
@@ -337,9 +291,6 @@ function triggerBrightnessFlash(){
   setTimeout(function(){crt.style.filter='';},60);
 }
 
-// ══════════════════════════════════════
-//  PHASES (couleurs + intensit\u00e9)
-// ══════════════════════════════════════
 function setPhase(phase){
   if(phase===currentPhase)return;
   currentPhase=phase;
@@ -395,7 +346,6 @@ function setPhase(phase){
   }
 }
 
-// Met le cogitateur en \u00e9tat corrompu permanent (apr\u00e8s boot)
 function setCorruptedState(){
   root.style.setProperty('--term-color','#ff0040');
   root.style.setProperty('--term-glow','rgba(255,0,64,0.7)');
@@ -407,13 +357,8 @@ function setCorruptedState(){
   cursorEl.classList.add('corrupted');
 }
 
-// ══════════════════════════════════════
-//  MOTEUR DE FRAPPE
-// ══════════════════════════════════════
 function wait(ms){return new Promise(function(r){setTimeout(r,ms);})}
-function scrollPage(pageEl){
-  if(pageEl)pageEl.scrollTop=pageEl.scrollHeight;
-}
+function scrollPage(p){if(p)p.scrollTop=p.scrollHeight;}
 function randomGlitchChar(){return GLITCH_CHARS[Math.floor(Math.random()*GLITCH_CHARS.length)];}
 
 async function typeLine(targetEl,lineData){
@@ -428,13 +373,7 @@ async function typeLine(targetEl,lineData){
   if(event==='flash'){triggerBrightnessFlash();triggerScreenTear();await wait(300);}
   if(event==='invert'){triggerInvertFlash();await wait(400);}
 
-  if(text===''){
-    await wait(500);
-    targetEl.appendChild(document.createElement('br'));
-    scrollPage(pageDiv);
-    return;
-  }
-
+  if(text===''){await wait(500);targetEl.appendChild(document.createElement('br'));scrollPage(pageDiv);return;}
   if(phase)setPhase(phase);
 
   var span=document.createElement('span');
@@ -447,36 +386,28 @@ async function typeLine(targetEl,lineData){
     if(typingAbort){typingAbort=false;return;}
     var ch=text[i];
     if(phase>=4&&Math.random()<.12){
-      span.textContent+=randomGlitchChar();
-      scrollPage(pageDiv);
+      span.textContent+=randomGlitchChar();scrollPage(pageDiv);
       await wait(speed*2.5+Math.random()*speed*2);
-      span.textContent=span.textContent.slice(0,-1);
-      await wait(speed*1.5);
+      span.textContent=span.textContent.slice(0,-1);await wait(speed*1.5);
     }
     if(Math.random()<.05)await wait(speed*3);
-    span.textContent+=ch;
-    scrollPage(pageDiv);
+    span.textContent+=ch;scrollPage(pageDiv);
     await wait(speed+Math.random()*speed*.4);
   }
-  targetEl.appendChild(document.createElement('br'));
-  scrollPage(pageDiv);
+  targetEl.appendChild(document.createElement('br'));scrollPage(pageDiv);
 }
 
-// ══════════════════════════════════════
-//  NETTOYAGE
-// ══════════════════════════════════════
 function cleanupGlitches(){
   stopNoise();
   glitchIntervals.forEach(clearInterval);
   glitchIntervals=[];
   if(postGlitchInterval){clearInterval(postGlitchInterval);postGlitchInterval=null;}
   if(archiveGlitchInterval){clearInterval(archiveGlitchInterval);archiveGlitchInterval=null;}
+  if(carteGlitchInterval){clearInterval(carteGlitchInterval);carteGlitchInterval=null;}
 }
 function fullCleanup(){
-  cleanupGlitches();
-  currentPhase=0;
-  crt.classList.remove('flickering','invert-flash');
-  crt.style.filter='';
+  cleanupGlitches();currentPhase=0;
+  crt.classList.remove('flickering','invert-flash');crt.style.filter='';
   cursorEl.classList.remove('corrupted');
   root.style.setProperty('--term-color','#00ff41');
   root.style.setProperty('--term-glow','rgba(0,255,65,0.5)');
@@ -486,9 +417,6 @@ function fullCleanup(){
   noiseCanvas.style.opacity='.04';
 }
 
-// ══════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════
 function buildNav(){
   navBar.innerHTML='';
   var keys=Object.keys(PAGES);
@@ -507,9 +435,7 @@ function buildNav(){
   }
 }
 
-function showNav(){
-  navBar.classList.add('visible');
-}
+function showNav(){navBar.classList.add('visible');}
 
 function updateActiveNav(){
   var links=navBar.querySelectorAll('.nav-link');
@@ -522,61 +448,31 @@ function updateActiveNav(){
 function navigateTo(pageName){
   if(!PAGES[pageName])return;
   if(pageName===currentPageName)return;
-
-  // Annuler toute frappe en cours
-  typingAbort=true;
-  cleanupGlitches();
-
-  // Transition flash
-  triggerBrightnessFlash();
-  triggerScreenTear();
-
+  typingAbort=true;cleanupGlitches();
+  triggerBrightnessFlash();triggerScreenTear();
   setTimeout(function(){
-    // Masquer toutes les pages
     var pages=document.querySelectorAll('.page');
     for(var i=0;i<pages.length;i++)pages[i].classList.remove('active');
-
-    // Nettoyer le contenu des pages non-accueil
-    if(pageName!=='accueil'){
-      var outEl=document.getElementById(pageName+'-output');
-      if(outEl)outEl.innerHTML='';
-    }
-
-    // Afficher la page cible
+    if(pageName!=='accueil'){var outEl=document.getElementById(pageName+'-output');if(outEl)outEl.innerHTML='';}
     var target=document.getElementById('page-'+pageName);
     if(target)target.classList.add('active');
-
-    currentPageName=pageName;
-    updateActiveNav();
-
-    // \u00c9tat visuel corrompu pour les pages non-accueil
+    currentPageName=pageName;updateActiveNav();
     if(pageName!=='accueil'){
-      setCorruptedState();
-      startNoise(10);
-      // Glitchs l\u00e9gers en arri\u00e8re-plan
+      setCorruptedState();startNoise(10);
       glitchIntervals.push(setInterval(function(){if(Math.random()<.25)triggerScreenTear();},3000));
     }
-
-    // Initialiser le contenu de la page
     PAGES[pageName].init();
   },200);
 }
 
-// ══════════════════════════════════════
-//  PAGE : ACCUEIL
-// ══════════════════════════════════════
 function initAccueil(){
   if(bootCompleted){
-    // Revenir \u00e0 l'\u00e9cran d'accueil sans rejouer le boot
-    fullCleanup();
-    output.innerHTML='';
+    fullCleanup();output.innerHTML='';
     startScreen.classList.remove('hidden');
     terminal.classList.add('hidden');
     navBar.classList.remove('visible');
-    startNoise(8);
-    return;
+    startNoise(8);return;
   }
-  // Premier lancement : montrer l'\u00e9cran d'attente
   startScreen.classList.remove('hidden');
   terminal.classList.add('hidden');
   output.innerHTML='';
@@ -587,28 +483,19 @@ function initAccueil(){
 async function startBootSequence(){
   if(isRunning)return;
   isRunning=true;
-
   startScreen.classList.add('hidden');
   terminal.classList.remove('hidden');
   output.innerHTML='';
-
   startNoise(12);
-
   for(var i=0;i<BOOT_SEQUENCE.length;i++){
     if(typingAbort){isRunning=false;return;}
     await typeLine(output,BOOT_SEQUENCE[i]);
   }
-
-  bootCompleted=true;
-  isRunning=false;
-
-  // Post-s\u00e9quence : le cogitateur surveille
+  bootCompleted=true;isRunning=false;
   postGlitchInterval=setInterval(function(){
     if(Math.random()<.3)triggerScreenTear();
     if(Math.random()<.08){triggerInvertFlash();setTimeout(triggerBrightnessFlash,200);}
   },4000);
-
-  // Lignes corrompues qui clignotent
   setInterval(function(){
     if(Math.random()<.2){
       var lines=output.querySelectorAll('.t-line.corrupted,.t-line.whisper');
@@ -621,35 +508,22 @@ async function startBootSequence(){
       }
     }
   },5000);
-
-  // Afficher la navigation
   showNav();
 }
 
-// ══════════════════════════════════════
-//  PAGE : ARCHIVES (placeholder)
-// ══════════════════════════════════════
 async function initArchives(){
-  var out=document.getElementById('archives-output');
-  if(!out)return;
-
+  var out=document.getElementById('archives-output');if(!out)return;
   var seq=[
-    {text:'\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',speed:8,style:'corrupted'},
+    {text:LINE,speed:8,style:'corrupted'},
     {text:'  ARCHIVES DU COGITATEUR \u2014 FER-DOULEUR',speed:12,style:'corrupted'},
     {text:'  R\u00C9CUP\u00C9RATION DE DONN\u00C9ES EN COURS...',speed:14,style:'corrupted'},
-    {text:'\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',speed:8,style:'corrupted'},
+    {text:LINE,speed:8,style:'corrupted'},
     {text:'',speed:10},
     {text:'  AVERTISSEMENT : INTEGRIT\u00C9 DES FICHIERS COMPROMISE.',speed:18,style:'warning'},
     {text:'  Certaines donn\u00E9es ont \u00E9t\u00E9 alt\u00E9r\u00E9es par des sources externes.',speed:20,style:'warning'},
     {text:'',speed:10}
   ];
-
-  for(var i=0;i<seq.length;i++){
-    if(typingAbort)return;
-    await typeLine(out,seq[i]);
-  }
-
-  // Liste de fichiers corrompus
+  for(var i=0;i<seq.length;i++){if(typingAbort)return;await typeLine(out,seq[i]);}
   var files=[
     {name:'journal_bord_738.M41',dots:' ............... ',status:'CORROMPU',cls:'corrupted'},
     {name:'registre_equipage_alpha.M41',dots:' ......... ',status:'FRAGMENT\u00C9',cls:'fragmented'},
@@ -662,57 +536,32 @@ async function initArchives(){
     {name:'scan_bouclier_vide_739.M41',dots:' .......... ',status:'CORROMPU',cls:'corrupted'},
     {name:'manifeste_cargaison_xeno.M41',dots:' ........ ',status:'ILLISIBLE',cls:'corrupted'}
   ];
-
   for(var f=0;f<files.length;f++){
     if(typingAbort)return;
-    var file=files[f];
-    var entry=document.createElement('div');
-    entry.className='file-entry';
-
-    var nameSpan=document.createElement('span');
-    nameSpan.className='file-name';
+    var file=files[f];var entry=document.createElement('div');entry.className='file-entry';
+    var nameSpan=document.createElement('span');nameSpan.className='file-name';
     nameSpan.textContent='\u25B8 '+file.name+file.dots;
-
-    var statusSpan=document.createElement('span');
-    statusSpan.className='file-status '+file.cls;
+    var statusSpan=document.createElement('span');statusSpan.className='file-status '+file.cls;
     statusSpan.textContent=file.status;
-
-    entry.appendChild(nameSpan);
-    entry.appendChild(statusSpan);
-    out.appendChild(entry);
-
-    await wait(120+Math.random()*80);
+    entry.appendChild(nameSpan);entry.appendChild(statusSpan);
+    out.appendChild(entry);await wait(120+Math.random()*80);
   }
-
   out.appendChild(document.createElement('br'));
-  var msg=document.createElement('span');
-  msg.className='t-line whisper';
+  var msg=document.createElement('span');msg.className='t-line whisper';
   msg.textContent='[LE COGITATEUR TENTE DE R\u00C9CUP\u00C9RER LES DONN\u00C9ES RESTANTES...]';
-  out.appendChild(msg);
-  out.appendChild(document.createElement('br'));
-
-  // Glitchs sur les fichiers
+  out.appendChild(msg);out.appendChild(document.createElement('br'));
   archiveGlitchInterval=setInterval(function(){
     var entries=out.querySelectorAll('.file-entry');
-    if(entries.length>0){
-      var target=entries[Math.floor(Math.random()*entries.length)];
-      target.classList.add('glitch-flash');
-      setTimeout(function(){target.classList.remove('glitch-flash');},100);
-    }
+    if(entries.length>0){var target=entries[Math.floor(Math.random()*entries.length)];target.classList.add('glitch-flash');setTimeout(function(){target.classList.remove('glitch-flash');},100);}
   },2500);
 }
 
-// ══════════════════════════════════════
-//  PAGE : CARTE (placeholder)
-// ══════════════════════════════════════
 async function initCarte(){
-  var out=document.getElementById('carte-output');
-  if(!out)return;
-
+  var out=document.getElementById('carte-output');if(!out)return;
   var seq=[
-    {text:'\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',speed:8,style:'corrupted'},
+    {text:LINE,speed:8,style:'corrupted'},
     {text:'  CARTOGRAPHIE WARP \u2014 VORTEX HURLANT',speed:12,style:'corrupted'},
-    {text:'\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',speed:8,style:'corrupted'},
+    {text:LINE,speed:8,style:'corrupted'},
     {text:'',speed:10},
     {text:'  COORDONN\u00C9ES WARP : [INSTABLES]',speed:20,style:'error'},
     {text:'  POSITION R\u00C9ELLE   : [IND\u00C9TERMIN\u00C9E]',speed:20,style:'error'},
@@ -722,110 +571,53 @@ async function initCarte(){
     {text:'IL N\u2019Y A PAS DE CARTE. IL N\u2019Y A QUE DES \u00C9CHOS DE SOUFFRANCE.',speed:30,style:'corrupted'},
     {text:'',speed:10}
   ];
-
-  for(var i=0;i<seq.length;i++){
-    if(typingAbort)return;
-    await typeLine(out,seq[i]);
-  }
-
-  // Grille warp instable
+  for(var i=0;i<seq.length;i++){if(typingAbort)return;await typeLine(out,seq[i]);}
   var gridChars='\u00B7\u2591\u2592\u2593\u2588\u2584\u2580\u258C\u2590';
-  var gridWidth=48;
-  var gridHeight=12;
-  var gridDiv=document.createElement('div');
-  gridDiv.className='warp-grid';
+  var gridWidth=48,gridHeight=12;
+  var gridDiv=document.createElement('div');gridDiv.className='warp-grid';
   var gridText='';
   for(var row=0;row<gridHeight;row++){
-    var line='';
-    for(var col=0;col<gridWidth;col++){
+    var line='';for(var col=0;col<gridWidth;col++){
       if(Math.random()<.15)line+=gridChars[Math.floor(Math.random()*gridChars.length)];
       else line+='\u00B7';
-    }
-    gridText+=line+'\n';
+    }gridText+=line+'\n';
   }
-  gridDiv.textContent=gridText;
-  gridDiv.style.whiteSpace='pre';
-  out.appendChild(gridDiv);
-  out.appendChild(document.createElement('br'));
-
-  var msg1=document.createElement('span');
-  msg1.className='t-line error';
+  gridDiv.textContent=gridText;gridDiv.style.whiteSpace='pre';
+  out.appendChild(gridDiv);out.appendChild(document.createElement('br'));
+  var msg1=document.createElement('span');msg1.className='t-line error';
   msg1.textContent='  SIGNAL WARP : \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2591\u2591 INSTABLE';
-  out.appendChild(msg1);
-  out.appendChild(document.createElement('br'));
-
-  var msg2=document.createElement('span');
-  msg2.className='t-line whisper';
+  out.appendChild(msg1);out.appendChild(document.createElement('br'));
+  var msg2=document.createElement('span');msg2.className='t-line whisper';
   msg2.textContent='  [LES DONN\u00C9ES REFUSENT DE SE STABILISER \u2014 LE VORTEX PARLE]';
-  out.appendChild(msg2);
-  out.appendChild(document.createElement('br'));
-
-  // Faire scintiller la grille
-  setInterval(function(){
+  out.appendChild(msg2);out.appendChild(document.createElement('br'));
+  carteGlitchInterval=setInterval(function(){
     if(!gridDiv.parentNode)return;
     var lines=gridText.split('\n');
     var rIdx=Math.floor(Math.random()*(lines.length-1));
     var cIdx=Math.floor(Math.random()*(lines[rIdx].length-1));
-    if(lines[rIdx]){
-      var arr=lines[rIdx].split('');
-      arr[cIdx]=gridChars[Math.floor(Math.random()*gridChars.length)];
-      lines[rIdx]=arr.join('');
-      gridDiv.textContent=lines.join('\n');
-    }
+    if(lines[rIdx]){var arr=lines[rIdx].split('');arr[cIdx]=gridChars[Math.floor(Math.random()*gridChars.length)];lines[rIdx]=arr.join('');gridDiv.textContent=lines.join('\n');}
   },150);
 }
 
-// ══════════════════════════════════════
-//  \u00c9V\u00c9NEMENTS
-// ══════════════════════════════════════
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&!terminal.classList.contains('hidden')&&startScreen.classList.contains('hidden'))return;
-  if(e.key==='Enter'&&currentPageName==='accueil'){
-    startBootSequence();
-  }
+  if(e.key==='Enter'&&currentPageName==='accueil')startBootSequence();
 });
 startScreen.addEventListener('click',function(){
   if(currentPageName==='accueil')startBootSequence();
 });
 
-// Navigation par hash
 window.addEventListener('hashchange',function(){
   var hash=window.location.hash.replace('#','');
-  if(hash&&PAGES[hash]&&hash!==currentPageName){
-    navigateTo(hash);
-  }
+  if(hash&&PAGES[hash]&&hash!==currentPageName)navigateTo(hash);
 });
 
-// ══════════════════════════════════════
-//  INITIALISATION
-// ══════════════════════════════════════
 initNoise();
 renderNoise();
 buildNav();
-
-// D\u00e9terminer la page de d\u00e9part depuis le hash
-var startHash=window.location.hash.replace('#','');
-if(startHash&&PAGES[startHash]){
-  // Navigation directe vers une page (pas de boot)
-  bootCompleted=true;
-  var pages=document.querySelectorAll('.page');
-  for(var i=0;i<pages.length;i++)pages[i].classList.remove('active');
-  var target=document.getElementById('page-'+startHash);
-  if(target)target.classList.add('active');
-  currentPageName=startHash;
-  updateActiveNav();
-  showNav();
-  setCorruptedState();
-  startNoise(10);
-  glitchIntervals.push(setInterval(function(){if(Math.random()<.25)triggerScreenTear();},3000));
-  PAGES[startHash].init();
-} else {
-  // Page d'accueil par défaut
-  currentPageName='accueil';
-  updateActiveNav();
-  document.getElementById('page-accueil').classList.add('active');
-  initAccueil();
-}
+currentPageName='accueil';
+updateActiveNav();
+initAccueil();
 </script>
 </body>
 </html>
