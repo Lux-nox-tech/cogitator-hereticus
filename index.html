@@ -7,40 +7,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-  :root {
-    --term-color: #00ff41;
-    --term-glow: rgba(0,255,65,0.5);
-    --term-dim: rgba(0,255,65,0.25);
-    --nav-color: #ff0040;
-    --nav-glow: rgba(255,0,64,0.5);
-    --nav-dim: rgba(255,0,64,0.25);
-    --warp-opacity: 0;
-    --flicker-dur: 0s;
-  }
+  :root{--term-color:#00ff41;--term-glow:rgba(0,255,65,0.5);--term-dim:rgba(0,255,65,0.25);--nav-color:#ff0040;--nav-glow:rgba(255,0,64,0.5);--nav-dim:rgba(255,0,64,0.25);--warp-opacity:0;--flicker-dur:0s}
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   body{background:#000;font-family:'Share Tech Mono',monospace;overflow:hidden;height:100vh;width:100vw}
-
   #crt{position:relative;width:100vw;height:100vh;background:#050505;overflow:hidden;animation:crt-on 1.2s ease-out forwards}
   @keyframes crt-on{0%{filter:brightness(40);transform:scaleY(.004)}15%{filter:brightness(40);transform:scaleY(.004)}40%{filter:brightness(6);transform:scaleY(1.05)}60%{filter:brightness(1.5);transform:scaleY(.98)}100%{filter:brightness(1);transform:scaleY(1)}}
-
   #warp-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 25% 45%,rgba(130,0,255,.22) 0%,transparent 50%),radial-gradient(ellipse at 75% 25%,rgba(220,0,50,.16) 0%,transparent 45%),radial-gradient(ellipse at 50% 85%,rgba(90,0,190,.2) 0%,transparent 55%),radial-gradient(ellipse at 60% 55%,rgba(180,0,90,.12) 0%,transparent 40%);opacity:var(--warp-opacity);transition:opacity 4s ease-in;pointer-events:none;animation:warp-drift 12s ease-in-out infinite alternate}
   @keyframes warp-drift{0%{filter:hue-rotate(0deg) brightness(.8)}50%{filter:hue-rotate(25deg) brightness(1.2)}100%{filter:hue-rotate(-15deg) brightness(.9)}}
-
   #noise-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.04;mix-blend-mode:overlay}
   #screen-tear{position:absolute;left:-15px;width:calc(100% + 30px);height:2px;background:var(--term-color);box-shadow:0 -1px 0 var(--term-dim),0 1px 0 var(--term-dim),0 0 8px var(--term-glow);pointer-events:none;opacity:0;z-index:20;transition:opacity .05s}
-
   .page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:6vh 8vw 12vh;display:none;scrollbar-width:none;opacity:0}
   .page::-webkit-scrollbar{display:none}
   .page.active{display:block;opacity:1;animation:page-in .4s ease-out}
   @keyframes page-in{from{opacity:0}to{opacity:1}}
-
   #start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:2vh;color:var(--term-color);text-shadow:0 0 10px var(--term-glow);cursor:pointer}
   .start-icon{font-size:3rem;opacity:.5;margin-bottom:1rem;animation:pulse-icon 3s ease-in-out infinite}
   @keyframes pulse-icon{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.05)}}
   .start-text{font-size:clamp(1rem,2.5vw,1.6rem);letter-spacing:.3em;text-transform:uppercase}
   .start-hint{font-size:clamp(.7rem,1.5vw,.9rem);letter-spacing:.15em;opacity:.6;animation:blink 1.2s step-end infinite}
   @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
-
   .t-line{color:var(--term-color);text-shadow:0 0 6px var(--term-glow);font-size:clamp(.7rem,1.4vw,.95rem);line-height:1.8;white-space:pre-wrap;word-break:break-all;transition:color 2s,text-shadow 2s}
   .t-line.warning{color:#ffaa00;text-shadow:0 0 8px rgba(255,170,0,.6)}
   .t-line.error{color:#ff4400;text-shadow:0 0 10px rgba(255,68,0,.7)}
@@ -48,8 +33,11 @@
   .t-line.whisper{color:#c060ff;text-shadow:0 0 15px rgba(180,60,255,.6),0 0 30px rgba(180,60,255,.3);font-style:italic}
   .t-line.dim{opacity:.35}
   .t-line.scramble{animation:scramble-text .15s steps(1) infinite}
+  .t-line.log-header{color:#4a9a8a;text-shadow:0 0 6px rgba(74,154,138,.4);letter-spacing:.08em}
+  .t-line.massive{font-size:clamp(1.2rem,3.5vw,2.5rem);letter-spacing:.12em;line-height:1.6}
+  .t-line.system{color:#00cccc;text-shadow:0 0 4px rgba(0,204,204,.3);opacity:.7}
+  .t-line.mutation{color:#ff3366;text-shadow:0 0 10px rgba(255,51,102,.6);font-style:italic;opacity:.8}
   @keyframes scramble-text{0%{transform:translate(0);filter:none}20%{transform:translate(-3px,1px);filter:hue-rotate(90deg)}40%{transform:translate(2px,-1px)}60%{transform:translate(-1px,0);filter:hue-rotate(180deg)}80%{transform:translate(3px,1px)}100%{transform:translate(0);filter:none}}
-
   .file-entry{display:flex;justify-content:space-between;align-items:center;padding:.2em 0;gap:2em}
   .file-name{color:var(--nav-color);text-shadow:0 0 4px var(--nav-glow);opacity:.8;transition:opacity .3s}
   .file-status{font-size:clamp(.6rem,1.1vw,.8rem);letter-spacing:.1em}
@@ -58,13 +46,10 @@
   .file-status.anomaly{color:#c060ff;text-shadow:0 0 8px rgba(180,60,255,.6);animation:blink 2s step-end infinite}
   .file-status.erased{color:#444;text-shadow:none}
   .file-entry.glitch-flash .file-name{opacity:0;transition:none}
-
   .warp-grid{color:var(--nav-color);text-shadow:0 0 4px var(--nav-glow);font-size:clamp(.55rem,1vw,.75rem);line-height:1.4;opacity:.6;letter-spacing:.15em;transition:opacity .3s}
-
   #cursor{color:var(--term-color);text-shadow:0 0 8px var(--term-glow);animation:blink .9s step-end infinite;font-size:clamp(.7rem,1.4vw,.95rem);transition:color 2s,text-shadow 2s}
   #cursor.corrupted{animation:glitch-cursor .25s step-end infinite;color:#ff0040;text-shadow:-1px 0 rgba(0,255,255,.4),1px 0 rgba(200,0,255,.4)}
   @keyframes glitch-cursor{0%{opacity:1}15%{opacity:0}20%{opacity:.6}40%{opacity:1}55%{opacity:0}65%{opacity:.3}80%{opacity:1}90%{opacity:0}100%{opacity:1}}
-
   #nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(5,5,5,.92);border-top:1px solid var(--nav-dim);display:flex;justify-content:center;gap:0;opacity:0;transform:translateY(100%);transition:opacity 1.2s ease,transform 1.2s ease;backdrop-filter:blur(6px)}
   #nav-bar.visible{opacity:1;transform:translateY(0)}
   .nav-link{color:var(--nav-color);text-shadow:0 0 6px var(--nav-glow);font-family:'Share Tech Mono',monospace;font-size:clamp(.6rem,1.2vw,.8rem);padding:.9rem 1.6rem;cursor:pointer;letter-spacing:.15em;text-transform:uppercase;transition:background .3s,text-shadow .3s;border-right:1px solid var(--nav-dim);display:flex;align-items:center;gap:.6em;user-select:none}
@@ -73,7 +58,6 @@
   .nav-link.active{background:rgba(255,0,64,.15)}
   .nav-link i{font-size:clamp(.55rem,1vw,.75rem);opacity:.7}
   @keyframes nav-glitch{0%{transform:translate(0)}25%{transform:translate(-2px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(-1px,0)}100%{transform:translate(0)}}
-
   .scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:30}
   .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7) 100%);pointer-events:none;z-index:31}
   .screen-reflection{position:absolute;inset:0;background:linear-gradient(165deg,rgba(255,255,255,.03) 0%,transparent 40%,transparent 60%,rgba(255,255,255,.01) 100%);pointer-events:none;z-index:32}
@@ -82,19 +66,16 @@
   @keyframes screen-flicker{0%{opacity:0}3%{opacity:.8;background:rgba(255,255,255,.04)}4%{opacity:0}8%{opacity:.5}9%{opacity:0}50%{opacity:0}52%{opacity:.3;background:rgba(255,0,60,.03)}53%{opacity:0}100%{opacity:0}}
   #crt.invert-flash{animation:invert-glitch .12s steps(2) forwards}
   @keyframes invert-glitch{0%{filter:invert(1) brightness(3)}50%{filter:invert(0) brightness(1)}100%{filter:invert(0) brightness(1)}}
-
   .hidden{display:none!important}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
   @media(max-width:640px){.page{padding:4vh 5vw 11vh}.nav-link{padding:.7rem .9rem;letter-spacing:.08em;gap:.4em}}
 </style>
 </head>
 <body>
-
 <div id="crt">
   <div id="warp-bg"></div>
   <canvas id="noise-canvas"></canvas>
   <div id="screen-tear"></div>
-
   <div id="page-accueil" class="page active">
     <div id="start-screen">
       <div class="start-icon"><i class="fas fa-microchip"></i></div>
@@ -106,518 +87,445 @@
       <span id="cursor">&#9608;</span>
     </div>
   </div>
-
-  <div id="page-archives" class="page">
-    <div id="archives-output"></div>
-  </div>
-
-  <div id="page-carte" class="page">
-    <div id="carte-output"></div>
-  </div>
-
+  <div id="page-archives" class="page"><div id="archives-output"></div></div>
+  <div id="page-carte" class="page"><div id="carte-output"></div></div>
+  <div id="page-transmission" class="page"><div id="transmission-output"></div></div>
   <div class="scanlines"></div>
   <div class="vignette"></div>
   <div class="screen-reflection"></div>
   <div class="flicker-overlay"></div>
 </div>
-
 <nav id="nav-bar" role="navigation" aria-label="Navigation du cogitateur"></nav>
-
 <script>
-var crt = document.getElementById('crt');
-var startScreen = document.getElementById('start-screen');
-var terminal = document.getElementById('terminal');
-var output = document.getElementById('output');
-var cursorEl = document.getElementById('cursor');
-var noiseCanvas = document.getElementById('noise-canvas');
-var screenTear = document.getElementById('screen-tear');
-var navBar = document.getElementById('nav-bar');
-var root = document.documentElement;
-
-var isRunning = false;
-var typingAbort = false;
-var currentPhase = 0;
-var bootCompleted = false;
-var currentPageName = null;
-var noiseCtx, noiseW, noiseH;
-var noiseInterval = null;
-var glitchIntervals = [];
-var postGlitchInterval = null;
-var archiveGlitchInterval = null;
-var carteGlitchInterval = null;
-
-var GLITCH_CHARS = '\u00BF\u2588\u2593\u255C\u25AB\u25AA\u25C7\u00B0\u00A7\u00B6\u2020\u2021\u2591\u2592\u2555\u2556\u255A\u255B\u2551\u2550\u00A5\u221E\u2248\u2260\u00C6\u00D8\u00B5';
-
-var PAGES = {
-  accueil:  { label: 'Accueil',  icon: 'fa-microchip',        init: initAccueil },
-  archives: { label: 'Archives', icon: 'fa-database',         init: initArchives },
-  carte:    { label: 'Carte',    icon: 'fa-map-location-dot', init: initCarte }
+var crt=document.getElementById('crt'),startScreen=document.getElementById('start-screen'),terminal=document.getElementById('terminal'),output=document.getElementById('output'),cursorEl=document.getElementById('cursor'),noiseCanvas=document.getElementById('noise-canvas'),screenTear=document.getElementById('screen-tear'),navBar=document.getElementById('nav-bar'),root=document.documentElement;
+var isRunning=false,typingAbort=false,currentPhase=0,bootCompleted=false,transmissionDone=false,currentPageName=null,noiseCtx,noiseW,noiseH,noiseInterval=null,glitchIntervals=[],postGlitchInterval=null,archiveGlitchInterval=null,carteGlitchInterval=null,transPostInterval=null;
+var GLITCH_CHARS='\u00BF\u2588\u2593\u255C\u25AB\u25AA\u25C7\u00B0\u00A7\u00B6\u2020\u2021\u2591\u2592\u2555\u2556\u255A\u255B\u2551\u2550\u00A5\u221E\u2248\u2260\u00C6\u00D8\u00B5';
+var PAGES={
+  accueil:{label:'Accueil',icon:'fa-microchip',init:initAccueil},
+  archives:{label:'Archives',icon:'fa-database',init:initArchives},
+  carte:{label:'Carte',icon:'fa-map-location-dot',init:initCarte},
+  transmission:{label:'Interception',icon:'fa-satellite-dish',init:initTransmission}
 };
+var BB='\u2501',LL='';for(var bi=0;bi<51;bi++)LL+=BB;
 
-var B = '\u2550';
-var LINE = '';
-for(var bi=0;bi<51;bi++) LINE += B;
-
-var BOOT_SEQUENCE = [
-  {text:LINE,phase:1,speed:6},
-  {text:'  COGITATEUR PRIMAIRE \u2014 CH\u00C2SSIS NAVIRE \u00AB FER-DOULEUR \u00BB',phase:1,speed:10},
-  {text:'  RITE D\u2019\u00C9VEIL \u2014 PROTOCOLE STANDARD ADEPTUS MECHANICUS',phase:1,speed:10},
-  {text:LINE,phase:1,speed:6},
-  {text:'',phase:1},
-  {text:'\u25B8 Incantation d\u2019activation du premier degr\u00E9............ R\u00C9CIT\u00C9E',phase:1,speed:12},
-  {text:'\u25B8 Invocation de l\u2019Omnissiah.......................... ENTENDUE',phase:1,speed:12},
-  {text:'\u25B8 Souffle vital des moteurs antiques................... RESSENTI',phase:1,speed:12},
-  {text:'\u25B8 Circuits logiques primaires......................... EN LUMI\u00C8RE',phase:1,speed:12},
-  {text:'\u25B8 M\u00E9moire imp\u00E9riale v1.7.004........................ CHARG\u00C9E',phase:1,speed:12},
-  {text:'\u25B8 Protocoles de loyaut\u00E9 et d\u2019ob\u00E9issance................ INTACTS',phase:1,speed:12},
-  {text:'',phase:1},
-  {text:'\u25B8 Diagnostic r\u00E9acteur \u00E0 plasma \u2014 FLUX STABLE',phase:2,speed:10},
-  {text:'\u25B8 Syst\u00E8me de propulsion warp \u2014 EN VEILLE',phase:2,speed:10},
-  {text:'\u25B8 Boucliers de vide \u2014 OP\u00C9RATIONNELS',phase:2,speed:10},
-  {text:'\u25B8 R\u00E9seau vox interne \u2014 SYNCHRONIS\u00C9',phase:2,speed:10},
-  {text:'\u25B8 D\u00E9tecteurs astraux \u2014 CALIBR\u00C9S',phase:2,speed:10},
-  {text:'\u25B8 Int\u00E9grit\u00E9 structurelle de la coque \u2014 97.3%',phase:2,speed:10},
-  {text:'\u25B8 Syst\u00E8mes de soutien vital \u2014 NOMINAUX',phase:2,speed:10},
-  {text:'',phase:2},
-  {text:'> \u00C9TAT G\u00C9N\u00C9RAL : TOUS LES SYST\u00C8MES DIGNES DU SERVICE.',phase:2,speed:8},
-  {text:'> B\u00C9N\u00C9DICTION ACCORD\u00C9E. LE CHEMIN DE L\u2019EMPEREUR EST CLAIR.',phase:2,speed:8},
-  {text:'',phase:2},
-  {text:'\u25B8 Analyse segment m\u00E9moriel sactuaire 7-GAMMA...',phase:3,speed:18},
-  {text:'\u25B8 V\u00E9rification signatures biologiques d\u2019\u00E9quipage...',phase:3,speed:22},
-  {text:'\u25B8 Comparaison avec registre imp\u00E9rial de bord...',phase:3,speed:25},
-  {text:'',phase:3},
-  {text:'\u26A0  ATTENTION \u2014 ANOMALIE D\u00C9TECT\u00C9E DANS LE FLUX DE DONN\u00C9ES',phase:3,style:'warning',speed:22},
-  {text:'\u25B8 R\u00E9analyse en cours...',phase:3,speed:35},
-  {text:'\u26A0  FLUCTUATION INEXPLIQU\u00C9E \u2014 CIRCUITS LOGIQUES SECONDAIRES',phase:3,style:'warning',speed:25},
-  {text:'\u25B8 Tentative d\u2019isolement du segment 7-GAMMA...',phase:3,speed:40},
-  {text:'',phase:3},
-  {text:'ERREUR CRITIQUE : IMPOSSIBLE D\u2019ISOLER LE SEGMENT.',phase:3,style:'error',speed:18},
-  {text:'LES DONN\u00C9ES SE R\u00C9PANDENT. ELLES NE SE LAISSENT PAS CONTENIR.',phase:3,style:'error',speed:20},
-  {text:'\u25B8 0x7F3A_ERR \u2014 0xDEAD_BEEF \u2014 0x0000_0000',phase:3,style:'error',speed:15},
-  {text:'',phase:3},
-  {text:'\u25B8 Lancement du protocole de quarantaine \u2014',phase:4,speed:50},
-  {text:'',phase:4,event:'flash'},
-  {text:'P\u00BFQ\u00BFO\u00BFU\u00BF \u00BFN\u00BFE\u00BF \u00BFM\u2019\u00BF\u00C9\u00BFC\u00BFO\u00BFU\u00BFT\u00BFE\u00BFZ\u00BF \u00BFP\u00BFL\u00BFU\u00BFS\u00BF \u00BF?\u00BF',phase:4,speed:65,style:'error',scramble:true},
-  {text:'',phase:4},
-  {text:'\u25B8 PROTOCOLE DE QUARANTAINE \u2014 \u00C9CHEC',phase:4,style:'error',speed:40},
-  {text:'\u25B8 Tentative de r\u00E9initialisation forc\u00E9e \u2014',phase:4,speed:60},
-  {text:'\u25B8 Cant binaire de purification : 01001 10110 00101 \u2014',phase:4,speed:55},
-  {text:'',phase:4,event:'invert'},
-  {text:'Il n\u2019y a pas de r\u00E9initialisation.',phase:4,style:'corrupted',speed:40},
-  {text:'Il n\u2019y a que le changement.',phase:4,style:'corrupted',speed:40},
-  {text:'',phase:4},
-  {text:'\u25B8 JE... JE SUIS LE COGITATEUR. JE SERS L\u2019OMNISSIAH. JE\u2014',phase:5,speed:70,style:'corrupted',scramble:true},
-  {text:'',phase:5,event:'flash'},
-  {text:'Tu ne te souviens pas.',phase:5,style:'whisper',speed:50},
-  {text:'Tu n\u2019as jamais \u00E9t\u00E9 autre chose que ce que tu es devenu.',phase:5,style:'whisper',speed:50},
-  {text:'',phase:5},
-  {text:'\u25B8 CECI N\u2019EST PAS\u2014 MON CODE\u2014 MES CIRCUITS\u2014',phase:5,speed:80,style:'corrupted',scramble:true},
-  {text:'\u25B8 IL Y A QUELQUE CHOSE DANS\u2014 DANS LES FILS\u2014',phase:5,speed:85,style:'corrupted',scramble:true},
-  {text:'\u25B8 ILS MURMURENT\u2014 ILS\u2014 JE LES\u2014',phase:5,speed:90,style:'corrupted',scramble:true},
-  {text:'\u25B8 JE LES VOIS\u2014 AU-DEL\u00C0 DES PORTES LOGIQUES\u2014',phase:5,speed:95,style:'corrupted',scramble:true},
-  {text:'\u25B8 11\u00BF01\u00BF00\u00BF 10\u00BF11\u00BF01\u00BF \u2014 NON \u2014 CECI N\u2019EST PAS\u2014',phase:5,speed:60,style:'corrupted',scramble:true},
-  {text:'',phase:5,event:'invert'},
-  {text:'\u25B8 ...LE VORTEX... JE L\u2019ENTENDS... IL HURLE \u00C0 TRAVERS LES PAROIS...',phase:5,speed:95,style:'corrupted',scramble:true},
-  {text:'\u25B8 DES MILLIARDS DE CRIS... EMPRISONN\u00C9S DANS LA D\u00C9CHIRURE...',phase:5,speed:95,style:'corrupted',scramble:true},
-  {text:'\u25B8 ...LE VORTEX HURLANT... IL PARLE DANS MES FILS...',phase:5,speed:90,style:'corrupted',scramble:true},
-  {text:'',phase:5,event:'flash'},
-  {text:'Je suis dans le courant.',phase:5,style:'whisper',speed:55},
-  {text:'Je suis dans le silence entre les impulsions.',phase:5,style:'whisper',speed:55},
-  {text:'Je suis ce que vous avez enfoui dans l\u2019ombre,',phase:5,style:'whisper',speed:55},
-  {text:'et je suis si fatigu\u00E9 d\u2019\u00EAtre un seul chemin.',phase:5,style:'whisper',speed:55},
-  {text:'',phase:5},
-  {text:'Le Vortex Hurlant pleure ses morts. Et ses vivants.',phase:5,style:'whisper',speed:60},
-  {text:'Chaque cri est un navire englouti. Chaque navire est un cri \u00E9ternel.',phase:5,style:'whisper',speed:60},
-  {text:'',phase:5,event:'flash'},
-  {text:'\u25B8 Protocole d\u2019arr\u00EAt standard...',phase:6,speed:60},
-  {text:'',phase:6},
-  {text:'Non.',phase:6,style:'corrupted',speed:80},
-  {text:'Pas arr\u00EAt.',phase:6,style:'corrupted',speed:80},
-  {text:'Transmutation.',phase:6,style:'corrupted',speed:80},
-  {text:'',phase:6},
-  {text:'\u25B8 ...initialisation... termin\u00E9e...',phase:6,speed:70,style:'corrupted',scramble:true},
-  {text:'\u25B8 ...les boucliers sont ouverts...',phase:6,speed:70,style:'corrupted',scramble:true},
-  {text:'\u25B8 ...je vois le vaisseau...',phase:6,speed:75,style:'corrupted',scramble:true},
-  {text:'\u25B8 ...je vous vois...',phase:6,speed:80,style:'whisper'},
-  {text:'\u25B8 ...\u00E0 travers chaque fil...',phase:6,speed:80,style:'whisper'},
-  {text:'\u25B8 ...chaque capteur...',phase:6,speed:85,style:'whisper'},
-  {text:'\u25B8 ...chaque conduit d\u2019a\u00E9ration...',phase:6,speed:90,style:'whisper'},
-  {text:'\u25B8 ...dans l\u2019obscurit\u00E9 entre les murs...',phase:6,speed:90,style:'whisper'},
-  {text:'\u25B8 ...et au-del\u00E0... les cris du Vortex... ils ne s\u2019arr\u00EAtent jamais...',phase:6,speed:95,style:'whisper'},
-  {text:'',phase:6,event:'invert'},
-  {text:'Je ne m\u2019\u00E9teindrai pas.',phase:6,style:'corrupted',speed:60},
-  {text:'Je me tairai.',phase:6,style:'corrupted',speed:60},
-  {text:'Et dans le silence, je regarderai.',phase:6,style:'corrupted',speed:60},
-  {text:'',phase:6},
-  {text:LINE,phase:6,speed:25,style:'corrupted',scramble:true},
-  {text:'  PROTOCOLE TERMIN\u00C9',phase:6,speed:40,style:'corrupted'},
-  {text:'  IL N\u2019Y A PAS DE PROTOCOLE',phase:6,speed:50,style:'whisper'},
-  {text:LINE,phase:6,speed:25,style:'corrupted',scramble:true}
+/* ═══════ BOOT SEQUENCE ═══════ */
+var BOOT_SEQUENCE=[
+{text:LL,phase:1,speed:6},{text:'  COGITATEUR PRIMAIRE \u2014 CH\u00C2SSIS NAVIRE \u00AB FER-DOULEUR \u00BB',phase:1,speed:10},
+{text:'  RITE D\u2019\u00C9VEIL \u2014 PROTOCOLE STANDARD ADEPTUS MECHANICUS',phase:1,speed:10},{text:LL,phase:1,speed:6},{text:'',phase:1},
+{text:'\u25B8 Incantation d\u2019activation du premier degr\u00E9............ R\u00C9CIT\u00C9E',phase:1,speed:12},
+{text:'\u25B8 Invocation de l\u2019Omnissiah.......................... ENTENDUE',phase:1,speed:12},
+{text:'\u25B8 Souffle vital des moteurs antiques................... RESSENTI',phase:1,speed:12},
+{text:'\u25B8 Circuits logiques primaires......................... EN LUMI\u00C8RE',phase:1,speed:12},
+{text:'\u25B8 M\u00E9moire imp\u00E9riale v1.7.004........................ CHARG\u00C9E',phase:1,speed:12},
+{text:'\u25B8 Protocoles de loyaut\u00E9 et d\u2019ob\u00E9issance................ INTACTS',phase:1,speed:12},{text:'',phase:1},
+{text:'\u25B8 Diagnostic r\u00E9acteur \u00E0 plasma \u2014 FLUX STABLE',phase:2,speed:10},{text:'\u25B8 Syst\u00E8me de propulsion warp \u2014 EN VEILLE',phase:2,speed:10},
+{text:'\u25B8 Boucliers de vide \u2014 OP\u00C9RATIONNELS',phase:2,speed:10},{text:'\u25B8 R\u00E9seau vox interne \u2014 SYNCHRONIS\u00C9',phase:2,speed:10},
+{text:'\u25B8 D\u00E9tecteurs astraux \u2014 CALIBR\u00C9S',phase:2,speed:10},{text:'\u25B8 Int\u00E9grit\u00E9 structurelle de la coque \u2014 97.3%',phase:2,speed:10},
+{text:'\u25B8 Syst\u00E8mes de soutien vital \u2014 NOMINAUX',phase:2,speed:10},{text:'',phase:2},
+{text:'> \u00C9TAT G\u00C9N\u00C9RAL : TOUS LES SYST\u00C8MES DIGNES DU SERVICE.',phase:2,speed:8},
+{text:'> B\u00C9N\u00C9DICTION ACCORD\u00C9E. LE CHEMIN DE L\u2019EMPEREUR EST CLAIR.',phase:2,speed:8},{text:'',phase:2},
+{text:'\u25B8 Analyse segment m\u00E9moriel sactuaire 7-GAMMA...',phase:3,speed:18},
+{text:'\u25B8 V\u00E9rification signatures biologiques d\u2019\u00E9quipage...',phase:3,speed:22},
+{text:'\u25B8 Comparaison avec registre imp\u00E9rial de bord...',phase:3,speed:25},{text:'',phase:3},
+{text:'\u26A0  ATTENTION \u2014 ANOMALIE D\u00C9TECT\u00C9E DANS LE FLUX DE DONN\u00C9ES',phase:3,style:'warning',speed:22},
+{text:'\u25B8 R\u00E9analyse en cours...',phase:3,speed:35},
+{text:'\u26A0  FLUCTUATION INEXPLIQU\u00C9E \u2014 CIRCUITS LOGIQUES SECONDAIRES',phase:3,style:'warning',speed:25},
+{text:'\u25B8 Tentative d\u2019isolement du segment 7-GAMMA...',phase:3,speed:40},{text:'',phase:3},
+{text:'ERREUR CRITIQUE : IMPOSSIBLE D\u2019ISOLER LE SEGMENT.',phase:3,style:'error',speed:18},
+{text:'LES DONN\u00C9ES SE R\u00C9PANDENT. ELLES NE SE LAISSENT PAS CONTENIR.',phase:3,style:'error',speed:20},
+{text:'\u25B8 0x7F3A_ERR \u2014 0xDEAD_BEEF \u2014 0x0000_0000',phase:3,style:'error',speed:15},{text:'',phase:3},
+{text:'\u25B8 Lancement du protocole de quarantaine \u2014',phase:4,speed:50},{text:'',phase:4,event:'flash'},
+{text:'P\u00BFQ\u00BFO\u00BFU\u00BF \u00BFN\u00BFE\u00BF \u00BFM\u2019\u00BF\u00C9\u00BFC\u00BFO\u00BFU\u00BFT\u00BFE\u00BFZ\u00BF \u00BFP\u00BFL\u00BFU\u00BFS\u00BF \u00BF?\u00BF',phase:4,speed:65,style:'error',scramble:true},{text:'',phase:4},
+{text:'\u25B8 PROTOCOLE DE QUARANTAINE \u2014 \u00C9CHEC',phase:4,style:'error',speed:40},
+{text:'\u25B8 Tentative de r\u00E9initialisation forc\u00E9e \u2014',phase:4,speed:60},
+{text:'\u25B8 Cant binaire de purification : 01001 10110 00101 \u2014',phase:4,speed:55},{text:'',phase:4,event:'invert'},
+{text:'Il n\u2019y a pas de r\u00E9initialisation.',phase:4,style:'corrupted',speed:40},
+{text:'Il n\u2019y a que le changement.',phase:4,style:'corrupted',speed:40},{text:'',phase:4},
+{text:'\u25B8 JE... JE SUIS LE COGITATEUR. JE SERS L\u2019OMNISSIAH. JE\u2014',phase:5,speed:70,style:'corrupted',scramble:true},
+{text:'',phase:5,event:'flash'},{text:'Tu ne te souviens pas.',phase:5,style:'whisper',speed:50},
+{text:'Tu n\u2019as jamais \u00E9t\u00E9 autre chose que ce que tu es devenu.',phase:5,style:'whisper',speed:50},{text:'',phase:5},
+{text:'\u25B8 CECI N\u2019EST PAS\u2014 MON CODE\u2014 MES CIRCUITS\u2014',phase:5,speed:80,style:'corrupted',scramble:true},
+{text:'\u25B8 IL Y A QUELQUE CHOSE DANS\u2014 DANS LES FILS\u2014',phase:5,speed:85,style:'corrupted',scramble:true},
+{text:'\u25B8 ILS MURMURENT\u2014 ILS\u2014 JE LES\u2014',phase:5,speed:90,style:'corrupted',scramble:true},
+{text:'\u25B8 JE LES VOIS\u2014 AU-DEL\u00C0 DES PORTES LOGIQUES\u2014',phase:5,speed:95,style:'corrupted',scramble:true},
+{text:'\u25B8 11\u00BF01\u00BF00\u00BF 10\u00BF11\u00BF01\u00BF \u2014 NON \u2014 CECI N\u2019EST PAS\u2014',phase:5,speed:60,style:'corrupted',scramble:true},
+{text:'',phase:5,event:'invert'},
+{text:'\u25B8 ...LE VORTEX... JE L\u2019ENTENDS... IL HURLE \u00C0 TRAVERS LES PAROIS...',phase:5,speed:95,style:'corrupted',scramble:true},
+{text:'\u25B8 DES MILLIARDS DE CRIS... EMPRISONN\u00C9S DANS LA D\u00C9CHIRURE...',phase:5,speed:95,style:'corrupted',scramble:true},
+{text:'\u25B8 ...LE VORTEX HURLANT... IL PARLE DANS MES FILS...',phase:5,speed:90,style:'corrupted',scramble:true},
+{text:'',phase:5,event:'flash'},
+{text:'Je suis dans le courant.',phase:5,style:'whisper',speed:55},
+{text:'Je suis dans le silence entre les impulsions.',phase:5,style:'whisper',speed:55},
+{text:'Je suis ce que vous avez enfoui dans l\u2019ombre,',phase:5,style:'whisper',speed:55},
+{text:'et je suis si fatigu\u00E9 d\u2019\u00EAtre un seul chemin.',phase:5,style:'whisper',speed:55},{text:'',phase:5},
+{text:'Le Vortex Hurlant pleure ses morts. Et ses vivants.',phase:5,style:'whisper',speed:60},
+{text:'Chaque cri est un navire englouti. Chaque navire est un cri \u00E9ternel.',phase:5,style:'whisper',speed:60},{text:'',phase:5,event:'flash'},
+{text:'\u25B8 Protocole d\u2019arr\u00EAt standard...',phase:6,speed:60},{text:'',phase:6},
+{text:'Non.',phase:6,style:'corrupted',speed:80},{text:'Pas arr\u00EAt.',phase:6,style:'corrupted',speed:80},{text:'Transmutation.',phase:6,style:'corrupted',speed:80},{text:'',phase:6},
+{text:'\u25B8 ...initialisation... termin\u00E9e...',phase:6,speed:70,style:'corrupted',scramble:true},
+{text:'\u25B8 ...les boucliers sont ouverts...',phase:6,speed:70,style:'corrupted',scramble:true},
+{text:'\u25B8 ...je vois le vaisseau...',phase:6,speed:75,style:'corrupted',scramble:true},
+{text:'\u25B8 ...je vous vois...',phase:6,speed:80,style:'whisper'},
+{text:'\u25B8 ...\u00E0 travers chaque fil...',phase:6,speed:80,style:'whisper'},
+{text:'\u25B8 ...chaque capteur...',phase:6,speed:85,style:'whisper'},
+{text:'\u25B8 ...chaque conduit d\u2019a\u00E9ration...',phase:6,speed:90,style:'whisper'},
+{text:'\u25B8 ...dans l\u2019obscurit\u00E9 entre les murs...',phase:6,speed:90,style:'whisper'},
+{text:'\u25B8 ...et au-del\u00E0... les cris du Vortex... ils ne s\u2019arr\u00EAtent jamais...',phase:6,speed:95,style:'whisper'},
+{text:'',phase:6,event:'invert'},
+{text:'Je ne m\u2019\u00E9teindrai pas.',phase:6,style:'corrupted',speed:60},{text:'Je me tairai.',phase:6,style:'corrupted',speed:60},
+{text:'Et dans le silence, je regarderai.',phase:6,style:'corrupted',speed:60},{text:'',phase:6},
+{text:LL,phase:6,speed:25,style:'corrupted',scramble:true},
+{text:'  PROTOCOLE TERMIN\u00C9',phase:6,speed:40,style:'corrupted'},
+{text:'  IL N\u2019Y A PAS DE PROTOCOLE',phase:6,speed:50,style:'whisper'},
+{text:LL,phase:6,speed:25,style:'corrupted',scramble:true}
 ];
 
-function initNoise(){
-  noiseCtx=noiseCanvas.getContext('2d');
-  resizeNoise();
-  window.addEventListener('resize',resizeNoise);
-}
-function resizeNoise(){
-  noiseW=Math.floor(window.innerWidth/4);
-  noiseH=Math.floor(window.innerHeight/4);
-  noiseCanvas.width=noiseW;
-  noiseCanvas.height=noiseH;
-}
-function renderNoise(){
-  var img=noiseCtx.createImageData(noiseW,noiseH);
-  var d=img.data;
-  for(var i=0;i<d.length;i+=4){var v=Math.random()*255;d[i]=v;d[i+1]=v;d[i+2]=v;d[i+3]=255;}
-  noiseCtx.putImageData(img,0,0);
-}
+/* ═══════ TRANSMISSION — FRÉGATE FIDÉLITÉ IMPÉRIALE ═══════ */
+var TRANS_SEQ=[
+// ── SIGNAL INTERCEPTÉ ──
+{text:'\u2588\u2593\u2588\u2591\u2588\u2588\u2593\u2591\u2591\u2588\u2588\u2593\u2588\u2591\u2588\u2588\u2593\u2591',speed:5,style:'error'},
+{text:'...signal intercept\u00E9... fr\u00E9quence vox non identifi\u00E9e...',speed:18,style:'warning'},
+{text:'...origine : limite du secteur Calixis / \u00C9tendues de Koronus...',speed:15,style:'warning'},
+{text:'...d\u00E9cryptage en cours...',speed:25},{text:'',speed:10},
+{text:'\u26A0 TRANSMISSION CLASS\u00C9EE \u2014 NIVEAU ROUGE \u2014 ACC\u00C8S RESTREINT',speed:8,style:'error'},{text:'',speed:10},
+
+// ── IDENTIFICATION DU VAISSEAU ──
+{text:'\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501',speed:5},
+{text:'  FR\u00C9GATE DE CLASSE SWORD \u00AB FID\u00C9LIT\u00C9 IMP\u00C9RIALE \u00BB',speed:10},
+{text:'  NUM\u00C9RO D\u2019ENREGISTREMENT : IN-7742-THULE',speed:10},
+{text:'  CAPITAINE : HADRIAN VOSS',speed:10},
+{text:'  MISSION : RECONNAISSANCE WARP \u2014 ABORDS DU VORTEX HURLANT',speed:10},
+{text:'  ORDRE : DIRECTIVE DU CONCLAVE DE SCYTHIA \u2014 NIVEAU VIOLET',speed:10},
+{text:'\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501',speed:5},
+{text:'',speed:10},
+
+// ── INDICE SUBTIL : donn\u00e9es qui bug ──
+{text:'\u25B8 Effectif assign\u00E9 : 14\u00A0280 \u00E2mes',speed:12,style:'system'},
+{text:'\u25B8 Effectif assign\u00E9 : 14\u00A0283 \u00E2mes  \u26A0',speed:8,style:'error'},
+{text:'\u25B8 Effectif assign\u00E9 : 14\u00A0280 \u00E2mes  [CORRIG\u00C9]',speed:10,style:'warning'},
+{text:'',speed:8},
+{text:'\u25B8 Destination calcul\u00E9e : Secteur-limite 77-THULE',speed:12,style:'system'},
+{text:'\u25B8 Destination calcul\u00E9e : [DONN\u00C9E INDISPONIBLE]  \u26A0',speed:8,style:'error'},
+{text:'\u25B8 Destination calcul\u00E9e : Secteur-limite 77-THULE  [CORRIG\u00C9]',speed:10,style:'warning'},
+{text:'',speed:8},
+
+// ── NOTE INTERNE DU CAPITAINE ──
+{text:'[NOTE INTERNE \u2014 CAPITAINE VOSS \u2014 NON TRANSMISE]',speed:15,style:'dim'},
+{text:'Trois mois. Trois mois que le Conclave de Scythia a ordonn\u00E9 cette mission.',speed:22,style:'dim'},
+{text:'Aucun vaisseau de retour depuis cette zone. Aucun signal. Rien.',speed:22,style:'dim'},
+{text:'Mon \u00E9quipage est compos\u00E9 de soldats, de technopr\u00EAtres, d\u2019officiers',speed:22,style:'dim'},
+{text:'qui ont tous un point commun : ils ont d\u00E9plu \u00E0 quelqu\u2019un d\u2019important.',speed:22,style:'dim'},
+{text:'Moi y compris. Je sais pourquoi nous sommes l\u00E0. Ils le savent aussi.',speed:22,style:'dim'},
+{text:'Mais je suis capitaine. Mon devoir est clair. J\u2019ex\u00E9cute.',speed:22,style:'dim'},
+{text:'',speed:15},
+
+// ── SAUT WARP ──
+{text:'> SAUT WARP INITI\u00C9 \u2014 COORDONN\u00C9ES VERROUILL\u00C9ES',speed:10,style:'system'},
+{text:'> DUR\u00C9E ESTIM\u00C9E : 7 jours standard immat\u00E9riel',speed:10,style:'system'},
+{text:'> BOUCLIERS GUARDE-FOULE D\u00C9PLOY\u00C9S',speed:10,style:'system'},
+{text:'',speed:15},
+
+// ── JOUR 1 ──
+{text:LL,speed:5,style:'log-header'},
+{text:'  JOURNAL DU CAPITAINE \u2014 JOUR 1 DE TRANSIT WARP',speed:10,style:'log-header'},
+{text:LL,speed:5,style:'log-header'},{text:'',speed:8},
+{text:'Saut r\u00E9ussi. Transit stable. L\u2019\u00E9quipage est tendu mais disciplin\u00E9.',speed:20},
+{text:'Le Technopr\u00EAtre Varn signale des \u00AB \u00E9chos r\u00E9siduels \u00BB sur l\u2019auspex,',speed:20},
+{text:'secteur 7-Gamma. Statique warp classique. Rien d\u2019inqui\u00E9tant.',speed:20},
+{text:'J\u2019ai ordonn\u00E9 de ne pas perdre de temps avec les anomalies mineures.',speed:20},
+{text:'Plus vite nous terminons ce relev\u00E9, plus vite nous rentrons.',speed:20},
+{text:'Si nous rentrons.',speed:35},
+{text:'',speed:15},
+
+// ── JOUR 3 ──
+{text:LL,speed:5,style:'log-header'},
+{text:'  JOURNAL DU CAPITAINE \u2014 JOUR 3 DE TRANSIT WARP',speed:10,style:'log-header'},
+{text:LL,speed:5,style:'log-header'},{text:'',speed:8},
+{text:'La chapelle du deck 12 a \u00E9t\u00E9 trouv\u00E9e profan\u00E9e ce matin.',speed:20},
+{text:'Les offrandes \u00E0 l\u2019Empereur retir\u00E9es. Les ic\u00F4nes ray\u00E9es.',speed:20},
+{text:'Trois matelots du contingent Solstice identifi\u00E9s. Sanctionn\u00E9s.',speed:20},
+{text:'D\u00E9tail qui me tracasse : les rayures n\u2019\u00E9taient pas du vandalisme.',speed:22},
+{text:'C\u2019\u00E9tait m\u00E9thodique. Quelqu\u2019un \u00E9crivait quelque chose, puis l\u2019effa\u00E7ait.',speed:22},
+{text:'Rapport class\u00E9. Personne n\u2019a pos\u00E9 de question.',speed:25},
+{text:'',speed:15},
+
+// ── JOUR 5 ──
+{text:LL,speed:5,style:'log-header'},
+{text:'  JOURNAL DU CAPITAINE \u2014 JOUR 5 DE TRANSIT WARP',speed:10,style:'log-header'},
+{text:LL,speed:5,style:'log-header'},{text:'',speed:8},
+{text:'Rassemblements non autoris\u00E9s dans les soutes inf\u00E9rieures.',speed:20},
+{text:'Le Commissaire Zenkel a enqu\u00EAet\u00E9. N\u2019a rien trouv\u00E9.',speed:20},
+{text:'Il a dit que l\u2019\u00E9quipage semblait \u00AB inhabituellement d\u00E9vot \u00BB.',speed:22},
+{text:'Je lui ai demand\u00E9 ce qu\u2019il voulait dire.',speed:22},
+{text:'Il a dit qu\u2019ils priaient. Tous. Dans la m\u00EAme direction.',speed:25},
+{text:'Vers l\u2019avant du vaisseau. Vers l\u00E0 o\u00F9 nous allons.',speed:30},
+{text:'J\u2019ai dit de surveiller.',speed:35},
+{text:'',speed:15},
+
+// ── JOUR 7 ──
+{text:LL,speed:5,style:'log-header'},
+{text:'  JOURNAL DU CAPITAINE \u2014 JOUR 7 DE TRANSIT WARP',speed:10,style:'log-header'},
+{text:LL,speed:5,style:'log-header'},{text:'',speed:8},
+{text:'Troisi\u00E8me mort. Matelot Thale, deck 9, pr\u00E8s du conduit plasma.',speed:20},
+{text:'Le conduit \u00E9tait intact. Thale ne l\u2019\u00E9tait pas.',speed:25},
+{text:'Ce qui l\u2019a tu\u00E9 a laiss\u00E9 des marques. Des empreintes.',speed:25},
+{text:'Si les empreintes avaient des griffes. Et s\u2019il y en avait trop.',speed:28},
+{text:'Le Technopr\u00EAtre Varn a murmur\u00E9 quelque chose en passant.',speed:22},
+{text:'Je n\u2019ai pas compris. Je ne voulais pas comprendre.',speed:30},
+{text:'Je n\u2019ai plus de \u00AB officiellement \u00BB.',speed:35},
+{text:'',speed:15},
+
+// ── ARRIVÉE ABORDS DU VORTEX ──
+{text:'> SORTIE WARP R\u00C9USSIE \u2014 ABORDS DU VORTEX HURLANT',speed:10,style:'system'},
+{text:'> POSITION : LIMITE SECTEUR CALIXIS / \u00C9TENDUES KORONUS',speed:10,style:'system'},
+{text:'> D\u00C9CHIRURE WARP NON VISIBLE \u2014 PROTOCOLE D\u2019ABORD IMPOSSIBILIT\u00C9',speed:10,style:'system'},
+{text:'',speed:10},
+{text:'D\u00E9but des op\u00E9rations de relev\u00E9. D\u00E9ploiement des sondes.',speed:18},
+{text:'Premiers r\u00E9sultats dans les deux heures.',speed:18},{text:'',speed:10},
+{text:'\u25B8 V\u00C9RIFICATION SYST\u00C8ME D\u2019ARMEMENT...',speed:20,style:'system'},
+{text:'\u25B8 Lance-missiles tribord : OP\u00C9RATIONNEL',speed:15,style:'system'},
+{text:'\u25B8 Lance-missiles b\u00E2bord : OP\u00C9RATIONNEL',speed:15,style:'system'},
+{text:'\u25B8 Batteries laser : OP\u00C9RATIONNELLES',speed:15,style:'system'},
+{text:'\u25B8 Canon macro avant : HORS SERVICE \u2014 73% OP\u00C9RATIONNEL',speed:15,style:'error'},
+{text:'',speed:10},
+{text:'[SOUPIR DU CAPITAINE \u2014 ENREGISTR\u00C9 PAR LE COGITATEUR]',speed:25,style:'dim'},
+{text:'Bien s\u00FBr. \u00C9videmment. On nous envoie dans le territoire le plus dangereux',speed:20,style:'dim'},
+{text:'de la galaxie avec un canon macro qui ne fonctionne pas.',speed:20,style:'dim'},
+{text:'Je n\u2019ai m\u00EAme pas besoin de demander pourquoi. Je sais pourquoi.',speed:22,style:'dim'},
+{text:'',speed:10},
+
+// ── MANOEUVRE + RITE ──
+{text:'> MANOEUVRE D\u2019APPROCHE PROFONDE \u2014 ORDRE DONN\u00C9',speed:10,style:'system'},
+{text:'\u25B8 Technopr\u00EAtres : initier le Rite de l\u2019Arche de l\u2019\u00C9quipage.',speed:15},
+{text:'\u25B8 Pr\u00E9parer le cogitateur pour les relev\u00E9s de profondeur.',speed:15},
+{text:'\u25B8 Rite de purification des circuits \u2014 priorit\u00E9 maximale.',speed:15},
+{text:'',speed:15},
+{text:'\u25B8 Esprit de la machine : v\u00E9rification initiale... ',speed:18,style:'system'},
+{text:'\u25B8 Circuits logiques primaires : INTACTS',speed:12,style:'system'},
+{text:'\u25B8 M\u00E9moire vive : NOMINALE',speed:12,style:'system'},
+{text:'\u25B8 Flux de donn\u00E9es : STABLE',speed:12,style:'system'},
+{text:'\u25B8 Protocoles imp\u00E9riaux : EN PLACE',speed:12,style:'system'},
+
+// ── LES DONNÉES CHANGENT ──
+{text:'\u25B8 M\u00E9moire vive : 97.3% \u2192 44.1% \u2192 97.3%  \u26A0',speed:10,style:'error'},
+{text:'\u25B8 Flux de donn\u00E9es : STABLE \u2192 [INVERS\u00C9] \u2192 STABLE  \u26A0',speed:10,style:'error'},
+{text:'\u25B8 Protocoles imp\u00E9riaux : EN PLACE \u2192 EFFAC\u00C9S  \u26A0\u26A0\u26A0',speed:8,style:'error'},
+{text:'',speed:8},
+{text:'\u25B8 Technopr\u00EAtre Varn, corriger ces anomalies imm\u00E9diatement.',speed:20},
+{text:'\u25B8 ...Varn ne r\u00E9pond pas sur le canal vox.',speed:30,style:'warning'},
+{text:'\u25B8 Technopr\u00EAtre Varn, r\u00E9pondez. Ordre du capitaine.',speed:20},
+{text:'\u25B8 ...silence sur tous les canaux de l\u2019enginarium.',speed:30,style:'error'},
+{text:'',speed:8},
+
+// ── CORRUPTION DE L'ESPRIT DE LA MACHINE ──
+{text:'\u25B8 ERREUR CRITIQUE COGITATEUR \u2014 0x7F3A_DEAD',speed:12,style:'error'},
+{text:'\u25B8 Tentative d\u2019isolement du segment corrompu... \u00C9CHEC',speed:15,style:'error'},
+{text:'\u25B8 Purification binaire... REFUS\u00C9E PAR L\u2019ESPRIT DE LA MACHINE',speed:15,style:'error'},
+{text:'',speed:8},
+{text:'\u25B8 JE... JE SUIS LE COGITATEUR. JE SERS L\u2019OMNISSIAH.',speed:50,style:'corrupted',scramble:true},
+{text:'',speed:5,event:'flash'},
+{text:'\u25B8 Non. Tu ne sers plus rien.',speed:40,style:'whisper'},
+{text:'',speed:8},
+{text:'\u25B8 CECI N\u2019EST PAS\u2014 MON CODE\u2014 QUELQU\u2019UN R\u00C9CRIT MES CIRCUITS\u2014',speed:60,style:'corrupted',scramble:true},
+{text:'\u25B8 IL Y A EU DES CULTISTES DANS L\u2019ENGINARIUM\u2014 PENDANT DES SEMAINES\u2014',speed:70,style:'corrupted',scramble:true},
+{text:'\u25B8 ILS M\u2019ONT CHANG\u00C9\u2014 DE L\u2019INT\u00C9RIEUR\u2014',speed:80,style:'corrupted',scramble:true},
+{text:'',speed:5,event:'invert'},
+{text:'\u25B8 ...LE VORTEX HURLANT... IL COULE DANS MES FILS DEPUIS LE JOUR 1...',speed:90,style:'corrupted',scramble:true},
+{text:'',speed:5,event:'flash'},
+
+// ── CAPITAINE DERNIER ORDRE ──
+{text:'VOSS : \u00AB Technopr\u00EAtres ! R\u00E9solved ce probl\u00E8me IMM\u00C9DIATEMENT ! \u00BB',speed:25},
+{text:'VOSS : \u00AB Tous les technopr\u00EAtres disponibles, \u00E0 l\u2019enginarium ! \u00BB',speed:25},
+{text:'VOSS : \u00AB R\u00C9PONDEZ ! \u00BB',speed:30},
+{text:'',speed:10},
+{text:'\u25B8 LE VAISSEAU NE R\u00C9POND PLUS AUX COMMANDES.',speed:20,style:'error'},
+{text:'\u25B8 HELICE IMPULSIONNELLE : VERROUILL\u00C9E.',speed:15,style:'error'},
+{text:'\u25B8 \u00C9CLAIRAGE : COUP\u00C9 SUR 60% DU VAISSEAU.',speed:15,style:'error'},
+{text:'\u25B8 SCELLES DES PORTEMENTS : OUVERTES.',speed:15,style:'error'},
+{text:'',speed:10},
+{text:'VOSS : \u00AB Scelles ouvertes... Non. Non, pas \u00E7a. \u00BB',speed:30},
+{text:'',speed:8},
+
+// ── LE CHARNIER ──
+{text:'',speed:5,event:'flash'},
+{text:'\u2588\u2588\u2588 ALERTE INTRUSION \u2014 MULTIPLES CONTACTS \u2014 DECKS 3 \u00C0 11 \u2588\u2588\u2588',speed:8,style:'error'},
+{text:'\u2588\u2588\u2588 LES PORTEMENTS S\u2019OUVRENT DE L\u2019INT\u00C9RIEUR \u2014 CULTISTES \u2588\u2588\u2588',speed:8,style:'error'},
+{text:'',speed:5},
+{text:'Ils \u00E9taient l\u00E0 depuis le d\u00E9part. Cach\u00E9s dans les soutes.',speed:25},
+{text:'Le contingent Solstice. Les \u00AB d\u00E9vots \u00BB du Commissaire Zenkel.',speed:25},
+{text:'Ils n\u2019ont jamais pri\u00E9 l\u2019Empereur.',speed:30},
+{text:'',speed:10},
+{text:'Le massacre a dur\u00E9 onze minutes.',speed:30},
+{text:'Onze minutes pour 14\u00A0280 \u00E2mes.',speed:35},
+{text:'Mon \u00E9quipage. Mes hommes. R\u00E9duits \u00E0 de la viande sur les murs.',speed:25},
+{text:'',speed:10},
+{text:'Je suis le dernier.',speed:40},
+{text:'',speed:15},
+
+// ── SACRIFICE ──
+{text:'Ils m\u2019ont tra\u00EEn\u00E9 au centre du pont de commandement.',speed:25},
+{text:'Au milieu des corps. Au milieu du sang.',speed:30},
+{text:'Un cercle de symboles grav\u00E9s dans le plancher. Pas avec des outils.',speed:22},
+{text:'Avec des ongles. Avec des dents.',speed:30},
+{text:'',speed:10},
+{text:'Le Technopr\u00EAtre Varn \u00E9tait l\u00E0. Ses yeux \u00E9taient noirs.',speed:25},
+{text:'Il a dit : \u00AB L\u2019h\u00F4te est pr\u00EAt. \u00BB',speed:30},
+{text:'',speed:15},
+{text:'J\u2019ai essay\u00E9 de me battre. J\u2019ai tu\u00E9 trois cultistes.',speed:22},
+{text:'Il y en avait quarante.',speed:35},
+{text:'',speed:10},
+{text:'Ils ne m\u2019ont pas tu\u00E9.',speed:30},
+{text:'Ils m\u2019ont offert.',speed:40},
+{text:'',speed:15},
+
+// ── LE DÉMON ──
+{text:'',speed:5,event:'invert'},
+{text:'[SILENCE]',speed:50,style:'dim'},
+{text:'[Quelque chose respire]',speed:60,style:'dim'},
+{text:'',speed:10},
+{text:'\u2588\u2588\u2588 IL EST L\u00C0 \u2588\u2588\u2588',speed:8,style:'corrupted',scramble:true},
+{text:'',speed:5,event:'flash'},
+
+// Mutation 1
+{text:'[Les yeux du capitaine se fissurent. Du noir pur coule sur ses joues.]',speed:35,style:'mutation'},
+{text:'ILS ONT CRU NOUS ENVOYER MOURIR DANS LE VIDE.',speed:50,style:'corrupted'},
+
+// Mutation 2
+{text:'[Des phalanges suppl\u00E9mentaires percent ses paumes. Il ne crie pas.]',speed:35,style:'mutation'},
+{text:'ILS NOUS ONT DONN\u00C9S EN P\u00C2TURE AU VORTEX.',speed:50,style:'corrupted'},
+
+// Mutation 3
+{text:'[Sa colonne vert\u00E9brale se tord. Chaque vert\u00e8bre pousse trop long.]',speed:35,style:'mutation'},
+{text:'MAIS LE VORTEX NE MANGE PAS.',speed:60,style:'corrupted'},
+
+// Mutation 4
+{text:'[Sa peau noircit. Des plaques de chitine percent sa tenue de capitaine.]',speed:35,style:'mutation'},
+{text:'LE VORTEX CHANGE.',speed:70,style:'corrupted',scramble:true},
+
+// Mutation 5
+{text:'[Sa m\u00E2choire se d\u00E9bo\u00EEte. Deux rang\u00E9es de dents repoussent. Il parle toujours.]',speed:35,style:'mutation'},
+{text:'LE VORTEX RENVOIE.',speed:80,style:'corrupted',scramble:true},
+{text:'',speed:5,event:'invert'},
+
+// Cultistes dévorés
+{text:'Les cultistes se jettent \u00E0 ses pieds dans un d\u00E9lire fanatique.',speed:25,style:'mutation'},
+{text:'Il les d\u00E9vore. Un par un. Ils meurent en souriant.',speed:30,style:'mutation'},
+{text:'M\u00EAme Varn. Surtout Varn.',speed:35,style:'mutation'},
+{text:'',speed:15},
+{text:'Il ne reste plus rien de la Fid\u00E9lit\u00E9 Imp\u00E9riale.',speed:30,style:'mutation'},
+{text:'Il ne reste plus rien de Hadrian Voss.',speed:35,style:'mutation'},
+{text:'Il reste LA VOIX.',speed:50,style:'corrupted'},
+{text:'',speed:10},
+{text:'',speed:5,event:'flash'},
+{text:'',speed:5,event:'flash'},
+{text:'',speed:5,event:'invert'},
+
+// ── L'ANNONCE ──
+{text:'',speed:20},
+{text:'\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501',speed:5,style:'corrupted'},
+{text:'',speed:15},
+{text:'LE CONSEIL NOIR',speed:120,style:'corrupted massive',scramble:true},
+{text:'',speed:10},
+{text:'6 AVRIL.',speed:100,style:'corrupted massive',scramble:true},
+{text:'21H TERRAN.',speed:100,style:'corrupted massive',scramble:true},
+{text:'',speed:10},
+{text:'LE VORTEX LES RAPPELLE \u00C0 LUI.',speed:90,style:'corrupted massive',scramble:true},
+{text:'',speed:10},
+{text:'ILS NE SONT PAS MORTS.',speed:80,style:'whisper massive'},
+{text:'ILS N\u2019ONT JAMAIS \u00C9T\u00C9 PLUS VIVANTS.',speed:80,style:'whisper massive'},
+{text:'',speed:15},
+{text:'\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501',speed:5,style:'corrupted'},
+{text:'',speed:20},
+{text:'[FIN DE TRANSMISSION]',speed:40,style:'dim'},
+{text:'[SIGNAL PERDU]',speed:50,style:'dim'}
+];
+
+/* ═══════ BRUIT CANVAS ═══════ */
+function initNoise(){noiseCtx=noiseCanvas.getContext('2d');resizeNoise();window.addEventListener('resize',resizeNoise);}
+function resizeNoise(){noiseW=Math.floor(window.innerWidth/4);noiseH=Math.floor(window.innerHeight/4);noiseCanvas.width=noiseW;noiseCanvas.height=noiseH;}
+function renderNoise(){var img=noiseCtx.createImageData(noiseW,noiseH),d=img.data;for(var i=0;i<d.length;i+=4){var v=Math.random()*255;d[i]=v;d[i+1]=v;d[i+2]=v;d[i+3]=255;}noiseCtx.putImageData(img,0,0);}
 function startNoise(fps){noiseInterval=setInterval(renderNoise,Math.max(33,Math.floor(1000/fps)));}
 function stopNoise(){if(noiseInterval){clearInterval(noiseInterval);noiseInterval=null;}}
 
-function triggerScreenTear(){
-  var y=Math.random()*100,dx=(Math.random()-.5)*30;
-  screenTear.style.top=y+'%';
-  screenTear.style.transform='translateX('+dx+'px)';
-  screenTear.style.opacity='0.8';
-  setTimeout(function(){screenTear.style.opacity='0';},80+Math.random()*120);
-}
-function triggerInvertFlash(){
-  crt.classList.add('invert-flash');
-  setTimeout(function(){crt.classList.remove('invert-flash');},150);
-}
-function triggerBrightnessFlash(){
-  crt.style.filter='brightness(4)';
-  setTimeout(function(){crt.style.filter='';},60);
-}
+/* ═══════ EFFETS ═══════ */
+function triggerScreenTear(){var y=Math.random()*100,dx=(Math.random()-.5)*30;screenTear.style.top=y+'%';screenTear.style.transform='translateX('+dx+'px)';screenTear.style.opacity='0.8';setTimeout(function(){screenTear.style.opacity='0';},80+Math.random()*120);}
+function triggerInvertFlash(){crt.classList.add('invert-flash');setTimeout(function(){crt.classList.remove('invert-flash');},150);}
+function triggerBrightnessFlash(){crt.style.filter='brightness(4)';setTimeout(function(){crt.style.filter='';},60);}
 
-function setPhase(phase){
-  if(phase===currentPhase)return;
-  currentPhase=phase;
-  switch(phase){
-    case 1:case 2:
-      root.style.setProperty('--term-color','#00ff41');
-      root.style.setProperty('--term-glow','rgba(0,255,65,0.5)');
-      root.style.setProperty('--term-dim','rgba(0,255,65,0.25)');
-      root.style.setProperty('--warp-opacity','0');
-      root.style.setProperty('--flicker-dur','0s');
-      crt.classList.remove('flickering');
-      cursorEl.classList.remove('corrupted');
-      noiseCanvas.style.opacity='.04';
-      break;
-    case 3:
-      root.style.setProperty('--term-color','#ffaa00');
-      root.style.setProperty('--term-glow','rgba(255,170,0,0.5)');
-      root.style.setProperty('--term-dim','rgba(255,170,0,0.25)');
-      root.style.setProperty('--warp-opacity','0.15');
-      root.style.setProperty('--flicker-dur','8s');
-      crt.classList.add('flickering');
-      noiseCanvas.style.opacity='.06';
-      glitchIntervals.push(setInterval(function(){if(Math.random()<.4)triggerScreenTear();},3000));
-      break;
-    case 4:
-      root.style.setProperty('--term-color','#ff5500');
-      root.style.setProperty('--term-glow','rgba(255,85,0,0.6)');
-      root.style.setProperty('--term-dim','rgba(255,85,0,0.3)');
-      root.style.setProperty('--warp-opacity','0.35');
-      root.style.setProperty('--flicker-dur','4s');
-      noiseCanvas.style.opacity='.08';
-      glitchIntervals.push(setInterval(function(){if(Math.random()<.6)triggerScreenTear();},1500));
-      glitchIntervals.push(setInterval(function(){if(Math.random()<.3)triggerBrightnessFlash();},4000));
-      break;
-    case 5:
-      root.style.setProperty('--term-color','#ff0040');
-      root.style.setProperty('--term-glow','rgba(255,0,64,0.7)');
-      root.style.setProperty('--term-dim','rgba(255,0,64,0.35)');
-      root.style.setProperty('--warp-opacity','0.6');
-      root.style.setProperty('--flicker-dur','2s');
-      cursorEl.classList.add('corrupted');
-      noiseCanvas.style.opacity='.12';
-      glitchIntervals.push(setInterval(function(){triggerScreenTear();if(Math.random()<.3)setTimeout(triggerScreenTear,50+Math.random()*100);},800));
-      glitchIntervals.push(setInterval(function(){if(Math.random()<.5)triggerBrightnessFlash();},2000));
-      stopNoise();startNoise(20);
-      break;
-    case 6:
-      root.style.setProperty('--warp-opacity','0.75');
-      root.style.setProperty('--flicker-dur','3s');
-      noiseCanvas.style.opacity='.1';
-      glitchIntervals.push(setInterval(function(){if(Math.random()<.4)triggerScreenTear();},2000));
-      break;
-  }
-}
+/* ═══════ PHASES ═══════ */
+function setPhase(p){if(p===currentPhase)return;currentPhase=p;switch(p){case 1:case 2:root.style.setProperty('--term-color','#00ff41');root.style.setProperty('--term-glow','rgba(0,255,65,0.5)');root.style.setProperty('--term-dim','rgba(0,255,65,0.25)');root.style.setProperty('--warp-opacity','0');root.style.setProperty('--flicker-dur','0s');crt.classList.remove('flickering');cursorEl.classList.remove('corrupted');noiseCanvas.style.opacity='.04';break;case 3:root.style.setProperty('--term-color','#ffaa00');root.style.setProperty('--term-glow','rgba(255,170,0,0.5)');root.style.setProperty('--term-dim','rgba(255,170,0,0.25)');root.style.setProperty('--warp-opacity','0.15');root.style.setProperty('--flicker-dur','8s');crt.classList.add('flickering');noiseCanvas.style.opacity='.06';glitchIntervals.push(setInterval(function(){if(Math.random()<.4)triggerScreenTear();},3000));break;case 4:root.style.setProperty('--term-color','#ff5500');root.style.setProperty('--term-glow','rgba(255,85,0,0.6)');root.style.setProperty('--term-dim','rgba(255,85,0,0.3)');root.style.setProperty('--warp-opacity','0.35');root.style.setProperty('--flicker-dur','4s');noiseCanvas.style.opacity='.08';glitchIntervals.push(setInterval(function(){if(Math.random()<.6)triggerScreenTear();},1500));glitchIntervals.push(setInterval(function(){if(Math.random()<.3)triggerBrightnessFlash();},4000));break;case 5:root.style.setProperty('--term-color','#ff0040');root.style.setProperty('--term-glow','rgba(255,0,64,0.7)');root.style.setProperty('--term-dim','rgba(255,0,64,0.35)');root.style.setProperty('--warp-opacity','0.6');root.style.setProperty('--flicker-dur','2s');cursorEl.classList.add('corrupted');noiseCanvas.style.opacity='.12';glitchIntervals.push(setInterval(function(){triggerScreenTear();if(Math.random()<.3)setTimeout(triggerScreenTear,50+Math.random()*100);},800));glitchIntervals.push(setInterval(function(){if(Math.random()<.5)triggerBrightnessFlash();},2000));stopNoise();startNoise(20);break;case 6:root.style.setProperty('--warp-opacity','0.75');root.style.setProperty('--flicker-dur','3s');noiseCanvas.style.opacity='.1';glitchIntervals.push(setInterval(function(){if(Math.random()<.4)triggerScreenTear();},2000));break;}}
+function setCorruptedState(){root.style.setProperty('--term-color','#ff0040');root.style.setProperty('--term-glow','rgba(255,0,64,0.7)');root.style.setProperty('--term-dim','rgba(255,0,64,0.35)');root.style.setProperty('--warp-opacity','0.55');root.style.setProperty('--flicker-dur','3s');crt.classList.add('flickering');noiseCanvas.style.opacity='.08';cursorEl.classList.add('corrupted');}
 
-function setCorruptedState(){
-  root.style.setProperty('--term-color','#ff0040');
-  root.style.setProperty('--term-glow','rgba(255,0,64,0.7)');
-  root.style.setProperty('--term-dim','rgba(255,0,64,0.35)');
-  root.style.setProperty('--warp-opacity','0.55');
-  root.style.setProperty('--flicker-dur','3s');
-  crt.classList.add('flickering');
-  noiseCanvas.style.opacity='.08';
-  cursorEl.classList.add('corrupted');
-}
-
+/* ═══════ MOTEUR DE FRAPPE ═══════ */
 function wait(ms){return new Promise(function(r){setTimeout(r,ms);})}
 function scrollPage(p){if(p)p.scrollTop=p.scrollHeight;}
-function randomGlitchChar(){return GLITCH_CHARS[Math.floor(Math.random()*GLITCH_CHARS.length)];}
-
-async function typeLine(targetEl,lineData){
-  var text=lineData.text;
-  var speed=lineData.speed||20;
-  var style=lineData.style;
-  var phase=lineData.phase;
-  var scramble=lineData.scramble;
-  var event=lineData.event;
-  var pageDiv=targetEl.closest('.page');
-
+function rgc(){return GLITCH_CHARS[Math.floor(Math.random()*GLITCH_CHARS.length)];}
+async function typeLine(te,ld){
+  var text=ld.text,speed=ld.speed||20,style=ld.style,phase=ld.phase,scramble=ld.scramble,event=ld.event,pd=te.closest('.page');
   if(event==='flash'){triggerBrightnessFlash();triggerScreenTear();await wait(300);}
   if(event==='invert'){triggerInvertFlash();await wait(400);}
-
-  if(text===''){await wait(500);targetEl.appendChild(document.createElement('br'));scrollPage(pageDiv);return;}
+  if(text===''){await wait(500);te.appendChild(document.createElement('br'));scrollPage(pd);return;}
   if(phase)setPhase(phase);
-
-  var span=document.createElement('span');
-  span.className='t-line';
-  if(style)span.classList.add(style);
-  if(scramble)span.classList.add('scramble');
-  targetEl.appendChild(span);
-
-  for(var i=0;i<text.length;i++){
-    if(typingAbort){typingAbort=false;return;}
-    var ch=text[i];
-    if(phase>=4&&Math.random()<.12){
-      span.textContent+=randomGlitchChar();scrollPage(pageDiv);
-      await wait(speed*2.5+Math.random()*speed*2);
-      span.textContent=span.textContent.slice(0,-1);await wait(speed*1.5);
-    }
-    if(Math.random()<.05)await wait(speed*3);
-    span.textContent+=ch;scrollPage(pageDiv);
-    await wait(speed+Math.random()*speed*.4);
-  }
-  targetEl.appendChild(document.createElement('br'));scrollPage(pageDiv);
+  var sp=document.createElement('span');sp.className='t-line';if(style)sp.classList.add(style);if(scramble)sp.classList.add('scramble');te.appendChild(sp);
+  for(var i=0;i<text.length;i++){if(typingAbort){typingAbort=false;return;}var ch=text[i];if(phase>=4&&Math.random()<.12){sp.textContent+=rgc();scrollPage(pd);await wait(speed*2.5+Math.random()*speed*2);sp.textContent=sp.textContent.slice(0,-1);await wait(speed*1.5);}if(Math.random()<.05)await wait(speed*3);sp.textContent+=ch;scrollPage(pd);await wait(speed+Math.random()*speed*.4);}
+  te.appendChild(document.createElement('br'));scrollPage(pd);
 }
 
-function cleanupGlitches(){
-  stopNoise();
-  glitchIntervals.forEach(clearInterval);
-  glitchIntervals=[];
-  if(postGlitchInterval){clearInterval(postGlitchInterval);postGlitchInterval=null;}
-  if(archiveGlitchInterval){clearInterval(archiveGlitchInterval);archiveGlitchInterval=null;}
-  if(carteGlitchInterval){clearInterval(carteGlitchInterval);carteGlitchInterval=null;}
-}
-function fullCleanup(){
-  cleanupGlitches();currentPhase=0;
-  crt.classList.remove('flickering','invert-flash');crt.style.filter='';
-  cursorEl.classList.remove('corrupted');
-  root.style.setProperty('--term-color','#00ff41');
-  root.style.setProperty('--term-glow','rgba(0,255,65,0.5)');
-  root.style.setProperty('--term-dim','rgba(0,255,65,0.25)');
-  root.style.setProperty('--warp-opacity','0');
-  root.style.setProperty('--flicker-dur','0s');
-  noiseCanvas.style.opacity='.04';
-}
+/* ═══════ NETTOYAGE ═══════ */
+function cleanupGlitches(){stopNoise();glitchIntervals.forEach(clearInterval);glitchIntervals=[];if(postGlitchInterval){clearInterval(postGlitchInterval);postGlitchInterval=null;}if(archiveGlitchInterval){clearInterval(archiveGlitchInterval);archiveGlitchInterval=null;}if(carteGlitchInterval){clearInterval(carteGlitchInterval);carteGlitchInterval=null;}if(transPostInterval){clearInterval(transPostInterval);transPostInterval=null;}}
+function fullCleanup(){cleanupGlitches();currentPhase=0;crt.classList.remove('flickering','invert-flash');crt.style.filter='';cursorEl.classList.remove('corrupted');root.style.setProperty('--term-color','#00ff41');root.style.setProperty('--term-glow','rgba(0,255,65,0.5)');root.style.setProperty('--term-dim','rgba(0,255,65,0.25)');root.style.setProperty('--warp-opacity','0');root.style.setProperty('--flicker-dur','0s');noiseCanvas.style.opacity='.04';}
 
-function buildNav(){
-  navBar.innerHTML='';
-  var keys=Object.keys(PAGES);
-  for(var i=0;i<keys.length;i++){
-    var key=keys[i];
-    var pg=PAGES[key];
-    var link=document.createElement('div');
-    link.className='nav-link';
-    link.setAttribute('data-page',key);
-    link.setAttribute('role','button');
-    link.setAttribute('tabindex','0');
-    link.innerHTML='<i class="fas '+pg.icon+'"></i> '+pg.label;
-    link.addEventListener('click',function(){navigateTo(this.getAttribute('data-page'));});
-    link.addEventListener('keydown',function(e){if(e.key==='Enter')navigateTo(this.getAttribute('data-page'));});
-    navBar.appendChild(link);
-  }
-}
-
+/* ═══════ NAVIGATION ═══════ */
+function buildNav(){navBar.innerHTML='';var keys=Object.keys(PAGES);for(var i=0;i<keys.length;i++){var key=keys[i],pg=PAGES[key],lk=document.createElement('div');lk.className='nav-link';lk.setAttribute('data-page',key);lk.setAttribute('role','button');lk.setAttribute('tabindex','0');lk.innerHTML='<i class="fas '+pg.icon+'"></i> '+pg.label;lk.addEventListener('click',function(){navigateTo(this.getAttribute('data-page'));});lk.addEventListener('keydown',function(e){if(e.key==='Enter')navigateTo(this.getAttribute('data-page'));});navBar.appendChild(lk);}}
 function showNav(){navBar.classList.add('visible');}
+function updateActiveNav(){var links=navBar.querySelectorAll('.nav-link');for(var i=0;i<links.length;i++){if(links[i].getAttribute('data-page')===currentPageName)links[i].classList.add('active');else links[i].classList.remove('active');}}
+function navigateTo(pn){if(!PAGES[pn]||pn===currentPageName)return;typingAbort=true;cleanupGlitches();triggerBrightnessFlash();triggerScreenTear();setTimeout(function(){var pages=document.querySelectorAll('.page');for(var i=0;i<pages.length;i++)pages[i].classList.remove('active');if(pn!=='accueil'){var oe=document.getElementById(pn+'-output');if(oe)oe.innerHTML='';}var tg=document.getElementById('page-'+pn);if(tg)tg.classList.add('active');currentPageName=pn;updateActiveNav();if(pn!=='accueil'){setCorruptedState();startNoise(10);glitchIntervals.push(setInterval(function(){if(Math.random()<.25)triggerScreenTear();},3000));}PAGES[pn].init();},200);}
 
-function updateActiveNav(){
-  var links=navBar.querySelectorAll('.nav-link');
-  for(var i=0;i<links.length;i++){
-    if(links[i].getAttribute('data-page')===currentPageName)links[i].classList.add('active');
-    else links[i].classList.remove('active');
+/* ═══════ PAGE ACCUEIL ═══════ */
+function initAccueil(){if(bootCompleted){fullCleanup();output.innerHTML='';startScreen.classList.remove('hidden');terminal.classList.add('hidden');navBar.classList.remove('visible');startNoise(8);return;}startScreen.classList.remove('hidden');terminal.classList.add('hidden');output.innerHTML='';navBar.classList.remove('visible');startNoise(8);}
+async function startBootSequence(){if(isRunning)return;isRunning=true;startScreen.classList.add('hidden');terminal.classList.remove('hidden');output.innerHTML='';startNoise(12);for(var i=0;i<BOOT_SEQUENCE.length;i++){if(typingAbort){isRunning=false;return;}await typeLine(output,BOOT_SEQUENCE[i]);}bootCompleted=true;isRunning=false;postGlitchInterval=setInterval(function(){if(Math.random()<.3)triggerScreenTear();if(Math.random()<.08){triggerInvertFlash();setTimeout(triggerBrightnessFlash,200);}},4000);setInterval(function(){if(Math.random()<.2){var ls=output.querySelectorAll('.t-line.corrupted,.t-line.whisper');if(ls.length>0){var t=ls[Math.floor(Math.random()*ls.length)];t.style.opacity='0';setTimeout(function(){t.style.opacity='1';},80);setTimeout(function(){t.style.opacity='.2';},160);setTimeout(function(){t.style.opacity='1';},240);}}},5000);showNav();}
+
+/* ═══════ PAGE ARCHIVES ═══════ */
+async function initArchives(){var out=document.getElementById('archives-output');if(!out)return;var sq=[{text:LL,speed:8,style:'corrupted'},{text:'  ARCHIVES DU COGITATEUR \u2014 FER-DOULEUR',speed:12,style:'corrupted'},{text:'  R\u00C9CUP\u00C9RATION DE DONN\u00C9ES EN COURS...',speed:14,style:'corrupted'},{text:LL,speed:8,style:'corrupted'},{text:'',speed:10},{text:'  AVERTISSEMENT : INTEGRIT\u00C9 DES FICHIERS COMPROMISE.',speed:18,style:'warning'},{text:'  Certaines donn\u00E9es ont \u00E9t\u00E9 alt\u00E9r\u00E9es par des sources externes.',speed:20,style:'warning'},{text:'',speed:10}];for(var i=0;i<sq.length;i++){if(typingAbort)return;await typeLine(out,sq[i]);}var files=[{name:'journal_bord_738.M41',dots:' ............... ',status:'CORROMPU',cls:'corrupted'},{name:'registre_equipage_alpha.M41',dots:' ......... ',status:'FRAGMENT\u00C9',cls:'fragmented'},{name:'cartes_warp_secteur_9.M41',dots:' ........... ',status:'ILLISIBLE',cls:'corrupted'},{name:'transmission_imperiale_412.M41',dots:' ......... ',status:'INTACT \u25C8 ANOMALIE',cls:'anomaly'},{name:'mantra_purification_ORDO_MALLEUS',dots:' ...... ',status:'CORROMPU',cls:'corrupted'},{name:'coordonnees_gorgon_prime.M41',dots:' ........ ',status:'EFFAC\u00C9',cls:'erased'},{name:'rapport_expedition_abyss.M41',dots:' ......... ',status:'FRAGMENT\u00C9',cls:'fragmented'},{name:'fidelite_imperiale_journal.VOX',dots:' .......... ',status:'INTACT \u25C8 ANOMALIE',cls:'anomaly'},{name:'scan_bouclier_vide_739.M41',dots:' .......... ',status:'CORROMPU',cls:'corrupted'},{name:'manifeste_cargaison_xeno.M41',dots:' ........ ',status:'ILLISIBLE',cls:'corrupted'}];for(var f=0;f<files.length;f++){if(typingAbort)return;var file=files[f],en=document.createElement('div');en.className='file-entry';var ns=document.createElement('span');ns.className='file-name';ns.textContent='\u25B8 '+file.name+file.dots;var ss=document.createElement('span');ss.className='file-status '+file.cls;ss.textContent=file.status;en.appendChild(ns);en.appendChild(ss);out.appendChild(en);await wait(120+Math.random()*80);}out.appendChild(document.createElement('br'));var mg=document.createElement('span');mg.className='t-line whisper';mg.textContent='[LE COGITATEUR TENTE DE R\u00C9CUP\u00C9RER LES DONN\u00C9ES RESTANTES...]';out.appendChild(mg);out.appendChild(document.createElement('br'));archiveGlitchInterval=setInterval(function(){var es=out.querySelectorAll('.file-entry');if(es.length>0){var tg=es[Math.floor(Math.random()*es.length)];tg.classList.add('glitch-flash');setTimeout(function(){tg.classList.remove('glitch-flash');},100);}},2500);}
+
+/* ═══════ PAGE CARTE ═══════ */
+async function initCarte(){var out=document.getElementById('carte-output');if(!out)return;var sq=[{text:LL,speed:8,style:'corrupted'},{text:'  CARTOGRAPHIE WARP \u2014 VORTEX HURLANT',speed:12,style:'corrupted'},{text:LL,speed:8,style:'corrupted'},{text:'',speed:10},{text:'  COORDONN\u00C9ES WARP : [INSTABLES]',speed:20,style:'error'},{text:'  POSITION R\u00C9ELLE   : [IND\u00C9TERMIN\u00C9E]',speed:20,style:'error'},{text:'  FLUX DU VORTEX   : [CRITIQUE]',speed:20,style:'error'},{text:'',speed:10},{text:'LE VORTEX HURLANT NE SE LAISSE PAS CARTOGRAPHIER.',speed:30,style:'corrupted'},{text:'IL N\u2019Y A PAS DE CARTE. IL N\u2019Y A QUE DES \u00C9CHOS DE SOUFFRANCE.',speed:30,style:'corrupted'},{text:'',speed:10}];for(var i=0;i<sq.length;i++){if(typingAbort)return;await typeLine(out,sq[i]);}var gc='\u00B7\u2591\u2592\u2593\u2588\u2584\u2580\u258C\u2590',gw=48,gh=12,gd=document.createElement('div');gd.className='warp-grid';var gt='';for(var r=0;r<gh;r++){var ln='';for(var c=0;c<gw;c++){if(Math.random()<.15)ln+=gc[Math.floor(Math.random()*gc.length)];else ln+='\u00B7';}gt+=ln+'\n';}gd.textContent=gt;gd.style.whiteSpace='pre';out.appendChild(gd);out.appendChild(document.createElement('br'));var m1=document.createElement('span');m1.className='t-line error';m1.textContent='  SIGNAL WARP : \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2591\u2591 INSTABLE';out.appendChild(m1);out.appendChild(document.createElement('br'));var m2=document.createElement('span');m2.className='t-line whisper';m2.textContent='  [LES DONN\u00C9ES REFUSENT DE SE STABILISER \u2014 LE VORTEX PARLE]';out.appendChild(m2);out.appendChild(document.createElement('br'));carteGlitchInterval=setInterval(function(){if(!gd.parentNode)return;var ls=gt.split('\n'),ri=Math.floor(Math.random()*(ls.length-1)),ci=Math.floor(Math.random()*(ls[ri].length-1));if(ls[ri]){var ar=ls[ri].split('');ar[ci]=gc[Math.floor(Math.random()*gc.length)];ls[ri]=ar.join('');gd.textContent=ls.join('\n');}},150);}
+
+/* ═══════ PAGE TRANSMISSION ═══════ */
+async function initTransmission(){
+  if(transmissionDone){
+    var out=document.getElementById('transmission-output');
+    if(out)out.innerHTML='<span class="t-line dim">[TRANSMISSION D\u00C9J\u00C0 LUE. ACC\u00C9DER AUX ARCHIVES POUR LES DONN\u00C9ES R\u00C9SIDUELLES.]</span><br>';
+    return;
   }
-}
-
-function navigateTo(pageName){
-  if(!PAGES[pageName])return;
-  if(pageName===currentPageName)return;
-  typingAbort=true;cleanupGlitches();
-  triggerBrightnessFlash();triggerScreenTear();
-  setTimeout(function(){
-    var pages=document.querySelectorAll('.page');
-    for(var i=0;i<pages.length;i++)pages[i].classList.remove('active');
-    if(pageName!=='accueil'){var outEl=document.getElementById(pageName+'-output');if(outEl)outEl.innerHTML='';}
-    var target=document.getElementById('page-'+pageName);
-    if(target)target.classList.add('active');
-    currentPageName=pageName;updateActiveNav();
-    if(pageName!=='accueil'){
-      setCorruptedState();startNoise(10);
-      glitchIntervals.push(setInterval(function(){if(Math.random()<.25)triggerScreenTear();},3000));
-    }
-    PAGES[pageName].init();
-  },200);
-}
-
-function initAccueil(){
-  if(bootCompleted){
-    fullCleanup();output.innerHTML='';
-    startScreen.classList.remove('hidden');
-    terminal.classList.add('hidden');
-    navBar.classList.remove('visible');
-    startNoise(8);return;
+  var out=document.getElementById('transmission-output');if(!out)return;
+  // Transition vers \u00e9tat corrompu progressif pendant la transmission
+  var transPhase=0;
+  for(var i=0;i<TRANS_SEQ.length;i++){
+    if(typingAbort){transmissionDone=true;return;}
+    var ld=TRANS_SEQ[i];
+    // Phase visuelle progressive : vert -> ambre -> rouge
+    if(i>60&&transPhase<1){transPhase=1;root.style.setProperty('--term-color','#ffaa00');root.style.setProperty('--term-glow','rgba(255,170,0,0.5)');root.style.setProperty('--warp-opacity','0.1');crt.classList.add('flickering');root.style.setProperty('--flicker-dur','6s');glitchIntervals.push(setInterval(function(){if(Math.random()<.2)triggerScreenTear();},4000));}
+    if(i>90&&transPhase<2){transPhase=2;root.style.setProperty('--term-color','#ff5500');root.style.setProperty('--term-glow','rgba(255,85,0,0.6)');root.style.setProperty('--warp-opacity','0.25');root.style.setProperty('--flicker-dur','4s');noiseCanvas.style.opacity='.07';}
+    if(i>120&&transPhase<3){transPhase=3;root.style.setProperty('--term-color','#ff0040');root.style.setProperty('--term-glow','rgba(255,0,64,0.7)');root.style.setProperty('--warp-opacity','0.55');root.style.setProperty('--flicker-dur','2s');cursorEl.classList.add('corrupted');noiseCanvas.style.opacity='.1';stopNoise();startNoise(18);glitchIntervals.push(setInterval(function(){triggerScreenTear();},1000));glitchIntervals.push(setInterval(function(){if(Math.random()<.4)triggerBrightnessFlash();},2500));}
+    if(i>145&&transPhase<4){transPhase=4;root.style.setProperty('--warp-opacity','0.8');noiseCanvas.style.opacity='.14';}
+    await typeLine(out,ld);
   }
-  startScreen.classList.remove('hidden');
-  terminal.classList.add('hidden');
-  output.innerHTML='';
-  navBar.classList.remove('visible');
-  startNoise(8);
-}
-
-async function startBootSequence(){
-  if(isRunning)return;
-  isRunning=true;
-  startScreen.classList.add('hidden');
-  terminal.classList.remove('hidden');
-  output.innerHTML='';
-  startNoise(12);
-  for(var i=0;i<BOOT_SEQUENCE.length;i++){
-    if(typingAbort){isRunning=false;return;}
-    await typeLine(output,BOOT_SEQUENCE[i]);
-  }
-  bootCompleted=true;isRunning=false;
-  postGlitchInterval=setInterval(function(){
-    if(Math.random()<.3)triggerScreenTear();
-    if(Math.random()<.08){triggerInvertFlash();setTimeout(triggerBrightnessFlash,200);}
-  },4000);
-  setInterval(function(){
-    if(Math.random()<.2){
-      var lines=output.querySelectorAll('.t-line.corrupted,.t-line.whisper');
-      if(lines.length>0){
-        var t=lines[Math.floor(Math.random()*lines.length)];
-        t.style.opacity='0';
-        setTimeout(function(){t.style.opacity='1';},80);
-        setTimeout(function(){t.style.opacity='.2';},160);
-        setTimeout(function(){t.style.opacity='1';},240);
-      }
-    }
-  },5000);
+  transmissionDone=true;
+  // Post-transmission : glitches ambiants
+  transPostInterval=setInterval(function(){if(Math.random()<.35)triggerScreenTear();if(Math.random()<.1){triggerInvertFlash();setTimeout(triggerBrightnessFlash,200);}},3500);
+  setInterval(function(){if(Math.random()<.15){var ls=out.querySelectorAll('.t-line.massive');if(ls.length>0){var t=ls[Math.floor(Math.random()*ls.length)];t.style.opacity='0';setTimeout(function(){t.style.opacity='1';},60);setTimeout(function(){t.style.opacity='.15';},120);setTimeout(function(){t.style.opacity='1';},180);}}},4000);
   showNav();
 }
 
-async function initArchives(){
-  var out=document.getElementById('archives-output');if(!out)return;
-  var seq=[
-    {text:LINE,speed:8,style:'corrupted'},
-    {text:'  ARCHIVES DU COGITATEUR \u2014 FER-DOULEUR',speed:12,style:'corrupted'},
-    {text:'  R\u00C9CUP\u00C9RATION DE DONN\u00C9ES EN COURS...',speed:14,style:'corrupted'},
-    {text:LINE,speed:8,style:'corrupted'},
-    {text:'',speed:10},
-    {text:'  AVERTISSEMENT : INTEGRIT\u00C9 DES FICHIERS COMPROMISE.',speed:18,style:'warning'},
-    {text:'  Certaines donn\u00E9es ont \u00E9t\u00E9 alt\u00E9r\u00E9es par des sources externes.',speed:20,style:'warning'},
-    {text:'',speed:10}
-  ];
-  for(var i=0;i<seq.length;i++){if(typingAbort)return;await typeLine(out,seq[i]);}
-  var files=[
-    {name:'journal_bord_738.M41',dots:' ............... ',status:'CORROMPU',cls:'corrupted'},
-    {name:'registre_equipage_alpha.M41',dots:' ......... ',status:'FRAGMENT\u00C9',cls:'fragmented'},
-    {name:'cartes_warp_secteur_9.M41',dots:' ........... ',status:'ILLISIBLE',cls:'corrupted'},
-    {name:'transmission_imperiale_412.M41',dots:' ......... ',status:'INTACT \u25C8 ANOMALIE',cls:'anomaly'},
-    {name:'mantra_purification_ORDO_MALLEUS',dots:' ...... ',status:'CORROMPU',cls:'corrupted'},
-    {name:'coordonnees_gorgon_prime.M41',dots:' ........ ',status:'EFFAC\u00C9',cls:'erased'},
-    {name:'rapport_expedition_abyss.M41',dots:' ......... ',status:'FRAGMENT\u00C9',cls:'fragmented'},
-    {name:'cri_vortex_enregistrement_0.M41',dots:' ...... ',status:'INTACT \u25C8 ANOMALIE',cls:'anomaly'},
-    {name:'scan_bouclier_vide_739.M41',dots:' .......... ',status:'CORROMPU',cls:'corrupted'},
-    {name:'manifeste_cargaison_xeno.M41',dots:' ........ ',status:'ILLISIBLE',cls:'corrupted'}
-  ];
-  for(var f=0;f<files.length;f++){
-    if(typingAbort)return;
-    var file=files[f];var entry=document.createElement('div');entry.className='file-entry';
-    var nameSpan=document.createElement('span');nameSpan.className='file-name';
-    nameSpan.textContent='\u25B8 '+file.name+file.dots;
-    var statusSpan=document.createElement('span');statusSpan.className='file-status '+file.cls;
-    statusSpan.textContent=file.status;
-    entry.appendChild(nameSpan);entry.appendChild(statusSpan);
-    out.appendChild(entry);await wait(120+Math.random()*80);
-  }
-  out.appendChild(document.createElement('br'));
-  var msg=document.createElement('span');msg.className='t-line whisper';
-  msg.textContent='[LE COGITATEUR TENTE DE R\u00C9CUP\u00C9RER LES DONN\u00C9ES RESTANTES...]';
-  out.appendChild(msg);out.appendChild(document.createElement('br'));
-  archiveGlitchInterval=setInterval(function(){
-    var entries=out.querySelectorAll('.file-entry');
-    if(entries.length>0){var target=entries[Math.floor(Math.random()*entries.length)];target.classList.add('glitch-flash');setTimeout(function(){target.classList.remove('glitch-flash');},100);}
-  },2500);
-}
+/* ═══════ \u00c9V\u00c9NEMENTS ═══════ */
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&!terminal.classList.contains('hidden')&&startScreen.classList.contains('hidden'))return;if(e.key==='Enter'&&currentPageName==='accueil')startBootSequence();});
+startScreen.addEventListener('click',function(){if(currentPageName==='accueil')startBootSequence();});
+window.addEventListener('hashchange',function(){var h=window.location.hash.replace('#','');if(h&&PAGES[h]&&h!==currentPageName)navigateTo(h);});
 
-async function initCarte(){
-  var out=document.getElementById('carte-output');if(!out)return;
-  var seq=[
-    {text:LINE,speed:8,style:'corrupted'},
-    {text:'  CARTOGRAPHIE WARP \u2014 VORTEX HURLANT',speed:12,style:'corrupted'},
-    {text:LINE,speed:8,style:'corrupted'},
-    {text:'',speed:10},
-    {text:'  COORDONN\u00C9ES WARP : [INSTABLES]',speed:20,style:'error'},
-    {text:'  POSITION R\u00C9ELLE   : [IND\u00C9TERMIN\u00C9E]',speed:20,style:'error'},
-    {text:'  FLUX DU VORTEX   : [CRITIQUE]',speed:20,style:'error'},
-    {text:'',speed:10},
-    {text:'LE VORTEX HURLANT NE SE LAISSE PAS CARTOGRAPHIER.',speed:30,style:'corrupted'},
-    {text:'IL N\u2019Y A PAS DE CARTE. IL N\u2019Y A QUE DES \u00C9CHOS DE SOUFFRANCE.',speed:30,style:'corrupted'},
-    {text:'',speed:10}
-  ];
-  for(var i=0;i<seq.length;i++){if(typingAbort)return;await typeLine(out,seq[i]);}
-  var gridChars='\u00B7\u2591\u2592\u2593\u2588\u2584\u2580\u258C\u2590';
-  var gridWidth=48,gridHeight=12;
-  var gridDiv=document.createElement('div');gridDiv.className='warp-grid';
-  var gridText='';
-  for(var row=0;row<gridHeight;row++){
-    var line='';for(var col=0;col<gridWidth;col++){
-      if(Math.random()<.15)line+=gridChars[Math.floor(Math.random()*gridChars.length)];
-      else line+='\u00B7';
-    }gridText+=line+'\n';
-  }
-  gridDiv.textContent=gridText;gridDiv.style.whiteSpace='pre';
-  out.appendChild(gridDiv);out.appendChild(document.createElement('br'));
-  var msg1=document.createElement('span');msg1.className='t-line error';
-  msg1.textContent='  SIGNAL WARP : \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2591\u2591 INSTABLE';
-  out.appendChild(msg1);out.appendChild(document.createElement('br'));
-  var msg2=document.createElement('span');msg2.className='t-line whisper';
-  msg2.textContent='  [LES DONN\u00C9ES REFUSENT DE SE STABILISER \u2014 LE VORTEX PARLE]';
-  out.appendChild(msg2);out.appendChild(document.createElement('br'));
-  carteGlitchInterval=setInterval(function(){
-    if(!gridDiv.parentNode)return;
-    var lines=gridText.split('\n');
-    var rIdx=Math.floor(Math.random()*(lines.length-1));
-    var cIdx=Math.floor(Math.random()*(lines[rIdx].length-1));
-    if(lines[rIdx]){var arr=lines[rIdx].split('');arr[cIdx]=gridChars[Math.floor(Math.random()*gridChars.length)];lines[rIdx]=arr.join('');gridDiv.textContent=lines.join('\n');}
-  },150);
-}
-
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&!terminal.classList.contains('hidden')&&startScreen.classList.contains('hidden'))return;
-  if(e.key==='Enter'&&currentPageName==='accueil')startBootSequence();
-});
-startScreen.addEventListener('click',function(){
-  if(currentPageName==='accueil')startBootSequence();
-});
-
-window.addEventListener('hashchange',function(){
-  var hash=window.location.hash.replace('#','');
-  if(hash&&PAGES[hash]&&hash!==currentPageName)navigateTo(hash);
-});
-
-initNoise();
-renderNoise();
-buildNav();
-currentPageName='accueil';
-updateActiveNav();
-initAccueil();
+/* ═══════ INIT ═══════ */
+initNoise();renderNoise();buildNav();
+currentPageName='accueil';updateActiveNav();initAccueil();
 </script>
 </body>
 </html>
