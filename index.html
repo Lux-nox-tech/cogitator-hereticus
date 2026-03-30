@@ -292,11 +292,7 @@ function clearAllGlitches(){for(var i=0;i<glitchIntervals.length;i++)clearInterv
 
 function setTermColor(c){if(c){root.style.setProperty('--term-color','#ff0040');root.style.setProperty('--term-glow','rgba(255,0,64,0.5)');root.style.setProperty('--term-dim','rgba(255,0,64,0.25)');cursorEl.classList.add('corrupted')}else{root.style.setProperty('--term-color','#00ff41');root.style.setProperty('--term-glow','rgba(0,255,65,0.5)');root.style.setProperty('--term-dim','rgba(0,255,65,0.25)');cursorEl.classList.remove('corrupted')}}
 
-/* Scroll le container LUI-MEME si il a overflow, plus son parent */
-function autoScroll(el){
-  if(el.scrollHeight>el.clientHeight) el.scrollTop=el.scrollHeight;
-  if(el.parentElement&&el.parentElement.scrollHeight>el.parentElement.clientHeight) el.parentElement.scrollTop=el.parentElement.scrollHeight;
-}
+function autoScroll(el){if(el.scrollHeight>el.clientHeight)el.scrollTop=el.scrollHeight;if(el.parentElement&&el.parentElement.scrollHeight>el.parentElement.clientHeight)el.parentElement.scrollTop=el.parentElement.scrollHeight}
 
 function typeLine(container,text,speed,styleClass,scramble){
   if(typingAbort)return Promise.resolve();
@@ -331,7 +327,20 @@ function switchPage(name){if(!PAGES[name])return;if(!bootCompleted&&name!=='accu
 
 function initAccueil(){if(bootCompleted){startScreen.classList.add('hidden');terminal.classList.remove('hidden');terminal.style.display='flex';output.innerHTML='';typeSequence(output,BOOT_SEQUENCE)}else{startScreen.classList.remove('hidden');terminal.classList.add('hidden');terminal.style.display=''}}
 
-function startBoot(){if(isRunning||bootCompleted)return;isRunning=true;typingAbort=false;startScreen.classList.add('hidden');terminal.classList.remove('hidden');terminal.style.display='flex';output.innerHTML='';navBar.classList.add('visible');typeSequence(output,BOOT_SEQUENCE);/* bootCompleted mis via callback dans setTimeout pour laisser la séquence finir */setTimeout(function(){if(!typingAbort){bootCompleted=true;try{localStorage.setItem('cog_boot_done','1')}catch(e){}startGlitch('pb',4000,8000);postGlitchInterval=setInterval(function(){if(Math.random()<0.3)doScreenTear();if(Math.random()<0.08)doFlash()},6000)}isRunning=false},200000)}
+function startBoot(){
+  if(isRunning||bootCompleted)return;
+  isRunning=true;
+  typingAbort=false;
+  bootCompleted=true;
+  try{localStorage.setItem('cog_boot_done','1')}catch(e){}
+  startScreen.classList.add('hidden');
+  terminal.classList.remove('hidden');
+  terminal.style.display='flex';
+  output.innerHTML='';
+  navBar.classList.add('visible');
+  typeSequence(output,BOOT_SEQUENCE);
+  setTimeout(function(){isRunning=false},120000);
+}
 
 function initMachineSpirit(){var c=document.getElementById('machine-output');c.innerHTML='';setTermColor(false);typeSequence(c,MACHINE_SEQ);setTimeout(function(){if(typingAbort)return;machineDone=true;setTermColor(true);root.style.setProperty('--warp-opacity','0.15');startGlitch('ms',2000,5000);machinePostInterval=setInterval(function(){if(Math.random()<0.15){var ls=c.querySelectorAll('.t-line');if(ls.length>0){var t=pick(ls),o=t.textContent;t.textContent=glitchStr(o.length);setTimeout(function(){if(!typingAbort)t.textContent=o},rand(80,200))}}if(Math.random()<0.1)doScreenTear()},3000)},200000)}
 
