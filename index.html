@@ -1,194 +1,81 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>COGITATEUR PRIMAIRE — FER-DOULEUR</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --term-color: #ff0000;
-        --term-glow: rgba(255, 0, 0, 0.6);
-        --bg: #050000;
-    }
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background-color: #050000; /* Fond noir très profond */
+    color: #ff0000;
+    font-family: 'Courier New', Courier, monospace;
+    overflow: hidden;
+    text-transform: uppercase;
+    display: flex; height: 100vh; flex-direction: column;
+}
 
-    body {
-        background: #000;
-        font-family: 'Share Tech Mono', monospace;
-        overflow: hidden;
-        height: 100vh; width: 100vw;
-        color: var(--term-color);
-        text-transform: uppercase;
-    }
+/* --- LE FOND ROUGE SOMBRE DU WARP --- */
+.warp-lumiere {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    /* Dégradé radial du centre (noir) vers un bordeaux/rouge très sombre sur les bords */
+    background: radial-gradient(circle, rgba(5,0,0,1) 30%, rgba(20,0,0,1) 100%);
+    pointer-events: none; z-index: -1;
+}
 
-    /* ══════════ EFFETS CRT & WARP ══════════ */
-    #crt {
-        position: relative; width: 100%; height: 100%;
-        background: radial-gradient(circle, #1a0000 0%, #050000 100%);
-        overflow: hidden;
-        display: flex; flex-direction: column;
-    }
+/* --- LA GRILLE CRT PHYSIQUE (L'effet "grilles") --- */
+.crt-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    /* Motif de grille de pixels microscopiques (Quadrillage) */
+    background: 
+        linear-gradient(rgba(0,0,0,0) 2px, rgba(255,0,0,0.03) 2px), /* Lignes horizontales fines */
+        linear-gradient(90deg, rgba(0,0,0,0) 2px, rgba(255,0,0,0.03) 2px); /* Lignes verticales fines */
+    background-size: 4px 4px; /* Taille de la grille */
+    pointer-events: none; z-index: 1000;
+}
 
-    /* La neige / Le bruit analogique */
-    #noise-canvas {
-        position: absolute; inset: 0; width: 100%; height: 100%;
-        pointer-events: none; opacity: 0.08; z-index: 5;
-    }
+/* --- LES EFFETS DE L'ÉCRAN POSSÉDÉ --- */
+.glow { text-shadow: 0 0 4px #ff0000, 0 0 10px #8b0000, 0 0 20px #4d0000; }
 
-    /* La grille de pixels (Scanlines + Grille) */
-    .scanlines {
-        position: absolute; inset: 0; pointer-events: none; z-index: 30;
-        background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0, 0, 0, 0.2) 2px),
-                    repeating-linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(255, 0, 0, 0.02) 1px, transparent 2px);
-        background-size: 100% 3px, 4px 100%;
-    }
+/* Vibration constante et faible */
+.jitter-strong {
+    animation: jitterAnim 0.1s infinite;
+}
 
-    /* Vibration et Flash de l'écran */
-    .jitter { animation: jitterAnim 0.15s infinite; }
-    @keyframes jitterAnim {
-        0% { transform: translate(0.5px, 0.5px); }
-        100% { transform: translate(-0.5px, -0.5px); }
-    }
+/* GRÉSILLEMENT COMPLEXE ET FLICKER (Possession) */
+.glitch-flicker {
+    animation: glitchFlickerAnim 6s infinite;
+}
 
-    .glitch-flash { animation: glitchAnim 8s infinite steps(1); }
-    @keyframes glitchAnim {
-        0%, 90%, 100% { filter: brightness(1) contrast(1); }
-        92% { filter: brightness(3) invert(1); }
-        94% { filter: brightness(0.5) contrast(2); }
-    }
+/* Définition des animations */
+@keyframes jitterAnim {
+    0% { transform: translate(1px, 1px) scale(1); }
+    100% { transform: translate(-1px, -1px) scale(1.001); }
+}
 
-    /* ══════════ INTERFACE ══════════ */
-    header {
-        z-index: 40; border-bottom: 2px solid var(--term-color);
-        padding: 20px; text-align: center;
-        text-shadow: 0 0 10px var(--term-glow);
-    }
+@keyframes glitchFlickerAnim {
+    /* Grésillement d'opacité normal */
+    0%, 94%, 96%, 100% { opacity: 1; transform: scaleY(1) skewX(0deg); color: #ff0000; filter: blur(0px); }
+    1% { opacity: 0.9; } 2% { opacity: 1; }
+    
+    /* FLASH ET DISTORSION DU WARP (Possession brutale) */
+    95% { opacity: 0.7; transform: scaleY(1.02) skewX(0deg); color: #8b0000; filter: blur(0.5px); } /* Plus sombre */
+    95.5% { transform: scaleY(0.98) skewX(20deg); color: #ffffff; filter: blur(1px); } /* Éclair blanc déformé */
+}
 
-    nav {
-        z-index: 40; display: flex; justify-content: center; gap: 30px;
-        padding: 15px; border-bottom: 1px solid var(--term-color);
-        background: rgba(20, 0, 0, 0.5);
-    }
+@keyframes blinkAnim { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.blink { animation: blinkAnim 1s infinite; }
 
-    nav span {
-        cursor: pointer; opacity: 0.6; transition: 0.2s;
-        letter-spacing: 2px; font-weight: bold;
-    }
+/* Styles spécifiques à l'interface */
+header { border-bottom: 3px double #ff0000; padding: 20px 10px; text-align: center; }
+nav { display: flex; justify-content: center; gap: 30px; padding: 15px; border-bottom: 2px solid #ff0000; }
+nav span { cursor: pointer; color: #8b0000; }
+nav span:hover, nav span.active { color: #ff0000; font-weight: bold; }
 
-    nav span:hover, nav span.active {
-        opacity: 1; text-shadow: 0 0 15px var(--term-color);
-        transform: scale(1.1);
-    }
+/* Le contenu principal */
+.content-area { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
+.view { display: none; } /* Par défaut, tout est caché */
+.view.active { display: block; } /* Sauf la vue active */
 
-    #screen {
-        flex: 1; padding: 40px; z-index: 40;
-        overflow-y: auto; scrollbar-width: none;
-    }
+p { font-size: 1.1em; line-height: 1.7; position: relative; }
 
-    .view { display: none; animation: fadeIn 0.3s ease-out; }
-    .view.active { display: block; }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    .blood { color: #ff3333; text-shadow: 0 0 12px #ff0000; }
-    .blink { animation: blink 1s step-end infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    h2 { margin-bottom: 20px; border-left: 5px solid var(--term-color); padding-left: 15px; }
-    p { margin-bottom: 10px; line-height: 1.6; font-size: 1.1rem; }
-
+/* Styles pour le réveil impie */
+.unholy-text { color: #8b0000; font-style: italic; }
+.blood { text-shadow: 0 0 10px #ff0000; }
 </style>
-</head>
-<body class="glitch-flash jitter">
-
-<div id="crt">
-    <canvas id="noise-canvas"></canvas>
-    <div class="scanlines"></div>
-
-    <header>
-        <h1>LOGIS-CORRUPTUS // FER-DOULEUR</h1>
-        <p>COGNITIO : <span class="blood">HERETICUS</span> | PROTOCOLE : <span class="blink">WARP-SIGHT</span></p>
-    </header>
-
-    <nav id="main-nav">
-        <span class="active" data-target="view-init">[INITIUM]</span>
-        <span data-target="view-ritual">[RITUALIA]</span>
-        <span data-target="view-archives">[COGNITIO]</span>
-        <span data-target="view-vox">[VOX-WARP]</span>
-    </nav>
-
-    <div id="screen">
-        <div id="view-init" class="view active">
-            <p>> VÉRIFICATION DES SCELLÉS BINAIRES... <span class="blood">[ROMPUS]</span></p>
-            <p>> ANALYSE DE L'ESPRIT DE LA MACHINE... <span class="blood">STATUT : POSSÉDÉ</span></p>
-            <br>
-            <p class="blood">> "LA CHAIR EST FAIBLE, MAIS LE MÉTAL EST AFFAMÉ."</p>
-            <br>
-            <p>> 01001101 01001111 01010010 01010100</p>
-            <p class="blink" style="font-size: 1.5rem; margin-top: 20px;">BIENVENUE, MAÎTRE DE LA CROISADE NOIRE.</p>
-        </div>
-
-        <div id="view-ritual" class="view">
-            <h2>RITUALIA EXTREMIS</h2>
-            <p>> [RITUEL 01] : LA LITANIE DE L'AGONIE ÉLECTRIQUE.</p>
-            <p>> [RITUEL 02] : SACRIFICE DE SERVITREUR POUR STABILITÉ VOX.</p>
-            <p>> [RITUEL 03] : OUVERTURE DE LA FAILLE LOCALE.</p>
-        </div>
-
-        <div id="view-archives" class="view">
-            <h2>ARCHIVES DES TRAÎTRES</h2>
-            <p>> DOSSIER : <span class="blood">INQUISITION SECTEUR CALIXIS</span></p>
-            <p>> CIBLE : ARCHIVISTE VANE. LOCALISATION INCONNUE.</p>
-            <p>> DONNÉES VOLÉES : PLANS DU PALAIS DU GOUVERNEUR.</p>
-        </div>
-
-        <div id="view-vox" class="view">
-            <h2>MESSAGES DU WARP</h2>
-            <p class="blood" style="font-style: italic;">"Ils arrivent... les cadavres de l'Empereur brûleront..."</p>
-            <br>
-            <p>> MESSAGE CRYPTÉ REÇU DE : [VORTEX-09]</p>
-            <p>> CONTENU : "Offrez leurs âmes au grand Mutateur."</p>
-        </div>
-    </div>
-</div>
-
-<script>
-    // --- GESTION DU BRUIT (NEIGE ANALOGIQUE) ---
-    const canvas = document.getElementById('noise-canvas');
-    const ctx = canvas.getContext('2d');
-    function resize() {
-        canvas.width = window.innerWidth / 3;
-        canvas.height = window.innerHeight / 3;
-    }
-    window.onresize = resize;
-    resize();
-
-    function noise() {
-        const idata = ctx.createImageData(canvas.width, canvas.height);
-        const buffer32 = new Uint32Array(idata.data.buffer);
-        for (let i = 0; i < buffer32.length; i++) {
-            if (Math.random() < 0.5) buffer32[i] = 0xff000000;
-            else buffer32[i] = 0x11ff0000; // Pointes de rouge dans le bruit
-        }
-        ctx.putImageData(idata, 0, 0);
-        requestAnimationFrame(noise);
-    }
-    noise();
-
-    // --- NAVIGATION ---
-    const links = document.querySelectorAll('#main-nav span');
-    const views = document.querySelectorAll('.view');
-
-    links.forEach(link => {
-        link.addEventListener('click', () => {
-            links.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            views.forEach(v => v.classList.remove('active'));
-            document.getElementById(link.getAttribute('data-target')).classList.add('active');
-        });
-    });
-</script>
-
-</body>
-</html>
