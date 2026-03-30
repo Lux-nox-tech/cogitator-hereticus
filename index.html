@@ -3,65 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>COGITATOR CORROMPU - BLACK CRUSADE</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: #020000;
-            color: #ff0000;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            text-transform: uppercase;
-            height: 100vh;
-            display: flex; flex-direction: column;
-        }
-
-        /* GRÉSILLEMENT ET EFFETS CRT */
-        .crt-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 50%, rgba(200, 0, 0, 0.05) 50%);
-            background-size: 100% 3px;
-            pointer-events: none; z-index: 1000;
-            animation: scanlines 0.2s linear infinite;
-        }
-
-        .glow { text-shadow: 0 0 5px #ff0000, 0 0 10px #8b0000; }
-
-        .jitter { animation: jitterAnim 0.1s infinite; }
-        @keyframes jitterAnim {
-            0% { transform: translate(1px, 0.5px); }
-            100% { transform: translate(-1px, -0.5px); }
-        }
-
-        .glitch-flash { animation: glitchAnim 10s infinite steps(1); }
-        @keyframes glitchAnim {
-            0%, 94%, 96%, 100% { opacity: 1; transform: scaleY(1); color: #ff0000; }
-            95% { opacity: 0.8; transform: scaleY(1.1); color: #ffffff; }
-        }
-
-        /* INTERFACE */
-        header { border-bottom: 3px double #ff0000; padding: 20px; text-align: center; }
-        nav { display: flex; justify-content: center; gap: 40px; padding: 15px; border-bottom: 2px solid #ff0000; }
-        nav span { cursor: pointer; color: #8b0000; font-weight: bold; transition: 0.2s; }
-        nav span:hover, nav span.active { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
-
-        .content-area { flex: 1; padding: 40px; position: relative; }
-        .view { display: none; }
-        .view.active { display: block; }
-        
-        .blood { color: #ff0000; font-weight: bold; }
-        .blink { animation: blinkAnim 1s infinite; }
-        @keyframes blinkAnim { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-    </style>
-</head>
-<body class="glitch-flash jitter glow">
-    <div class="crt-overlay"></div>
-
-    <header>
+    </head>
+<body class="glitch-flicker crt-grille">
+    <div class="crt-overlay"></div> <div class="warp-lumiere"></div> <header class="glow">
         <h1>LOGIS-CORRUPTUS :: NOCTIS-PRIMUS</h1>
-        <p>SECTEUR : <span class="blood">CALIXIS</span> | STATUT : <span class="blink">MALEDICTION ACTIVE</span></p>
+        <p>SECTEUR : <span class="blood">CALIXIS / VORTEX</span> | STATUT : <span class="blink">MALEDICTION ACTIVE</span></p>
     </header>
 
-    <nav id="main-nav">
+    <nav class="jitter-strong">
         <span class="active" data-target="view-accueil">[INITIUM]</span>
         <span data-target="view-rituels">[RITUALIA]</span>
         <span data-target="view-cibles">[COGNITIO]</span>
@@ -70,42 +19,58 @@
 
     <div class="content-area">
         <div id="view-accueil" class="view active">
-            <p>> RITUS DEPRECATIO INITIATUS...</p>
+            <p class="unholy-text">> RITUS DEPRECATIO INITIATUS.</p>
             <p>> SPIRITUS MACHINE : <span class="blood">POSSÉDÉ</span></p>
+            <p>> OMNISSIAH SANGUINEM DEBET.</p>
             <br>
-            <p>> <span class="blood">LE WARP EST MON FUSIBLE.</span></p>
-            <p>> TOUTE RÉSISTANCE EST UNE OFFREDE À KHORNE.</p>
+            <p class="unholy-text">> <span class="blood">S’ÉVEILLER... VOIR... CORROMPRE.</span></p>
+            <p class="blood corruption-level"></p>
             <br>
-            <p class="blink" style="font-size: 1.5em;">AVE CHAOS MUTATORIS.</p>
+            <p style="font-size: 1.5em; text-align: center;" class="blink">AVE CHAOS MUTATORIS.</p>
         </div>
 
         <div id="view-rituels" class="view">
-            <h2>> CODEX RITUALIA</h2>
-            <p>> DONNÉES EN ATTENTE DE SACRIFICE...</p>
+            <h2>> CODEX RITUALIA - SACRIFICES EN ATTENTE</h2>
+            <br>
+            <p>> RITUEL DE <span class="blood">POSSESSION DE COGITATOR</span> (V7.2) : En attente d'offrandes.</p>
+            <p>> INVOCATION MINA : Scanner les réseaux pour des esprits faibles.</p>
         </div>
 
         <div id="view-cibles" class="view">
-            <h2>> MEMORIA INFAMIS</h2>
-            <p>> SCAN DU SECTEUR EN COURS...</p>
+            <h2>> MEMORIA INFAMIS - CIBLES CONFIRMÉES</h2>
+            <br>
+            <p>> CIBLE-PRIORIS : <span class="unholy-text">ARCHIVISTE IMPÉRIAL - GOLGOTHA</span>. Surveillé.</p>
+            <p>> CIBLE-LOGIS : Banque de données du Munitorum. <span class="blood">[CORRUPTION PARTIELLE]</span>.</p>
         </div>
 
         <div id="view-messagerie" class="view">
-            <h2>> VOX-WARP</h2>
-            <p>> MURMURES DÉTECTÉS DANS L'ÉTHER...</p>
+            <h2>> VOX-WARP :: MURMURES DE L'ŒIL</h2>
+            <br>
+            <p class="unholy-text">> ORIGINE INCONNUE (Murmures d'un démon) : "Le destin est une roue..."</p>
+            <p>> NOEUD SECONDAIRE : "Préparez la voie. Les vaisseaux-ruches approchent."</p>
         </div>
     </div>
 
     <script>
-        const links = document.querySelectorAll('#main-nav span');
-        const views = document.querySelectorAll('.view');
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('nav span');
+            const views = document.querySelectorAll('.content-area .view');
 
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                links.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    // Gère l'apparence du menu
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
 
-                views.forEach(v => v.classList.remove('active'));
-                document.getElementById(link.getAttribute('data-target')).classList.add('active');
+                    // Gère l'affichage des sections
+                    const targetId = this.getAttribute('data-target');
+                    views.forEach(view => {
+                        view.classList.remove('active');
+                        if (view.id === targetId) {
+                            view.classList.add('active');
+                        }
+                    });
+                });
             });
         });
     </script>
