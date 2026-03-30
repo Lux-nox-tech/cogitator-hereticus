@@ -46,6 +46,7 @@
   .file-status.fragmented{color:#ffaa00;text-shadow:0 0 6px rgba(255,170,0,.5)}
   .file-status.anomaly{color:#c060ff;text-shadow:0 0 8px rgba(180,60,255,.6);animation:blink 2s step-end infinite}
   .file-status.erased{color:#444;text-shadow:none}
+  .file-status.sealed{color:#ff0040;text-shadow:0 0 6px rgba(255,0,64,.5);font-weight:bold}
   .file-entry.glitch-flash .file-name{opacity:0;transition:none}
   .warp-grid{color:var(--nav-color);text-shadow:0 0 4px var(--nav-glow);font-size:clamp(.55rem,1vw,.75rem);line-height:1.4;opacity:.6;letter-spacing:.15em;transition:opacity .3s}
   #cursor{color:var(--term-color);text-shadow:0 0 8px var(--term-glow);animation:blink .9s step-end infinite;font-size:clamp(.7rem,1.4vw,.95rem);transition:color 2s,text-shadow 2s}
@@ -99,12 +100,49 @@
 </div>
 <nav id="nav-bar" role="navigation" aria-label="Navigation du cogitateur"></nav>
 <script>
-var crt=document.getElementById('crt'),startScreen=document.getElementById('start-screen'),terminal=document.getElementById('terminal'),output=document.getElementById('output'),cursorEl=document.getElementById('cursor'),noiseCanvas=document.getElementById('noise-canvas'),screenTear=document.getElementById('screen-tear'),navBar=document.getElementById('nav-bar'),root=document.documentElement;
-var isRunning=false,typingAbort=false,currentPhase=0,bootCompleted=localStorage.getItem('cog_boot_done')==='1',transmissionDone=false,machineDone=false,currentPageName=null,noiseCtx,noiseW,noiseH,noiseInterval=null,glitchIntervals=[],postGlitchInterval=null,archiveGlitchInterval=null,carteGlitchInterval=null,transPostInterval=null,machinePostInterval=null;
+/* ===== RÉFÉRENCES DOM ===== */
+var crt=document.getElementById('crt'),
+    startScreen=document.getElementById('start-screen'),
+    terminal=document.getElementById('terminal'),
+    output=document.getElementById('output'),
+    cursorEl=document.getElementById('cursor'),
+    noiseCanvas=document.getElementById('noise-canvas'),
+    screenTear=document.getElementById('screen-tear'),
+    navBar=document.getElementById('nav-bar'),
+    root=document.documentElement;
+
+/* ===== ÉTAT GLOBAL ===== */
+var isRunning=false,
+    typingAbort=false,
+    currentPhase=0,
+    bootCompleted=localStorage.getItem('cog_boot_done')==='1',
+    transmissionDone=false,
+    machineDone=false,
+    archivesDone=false,
+    carteDone=false,
+    currentPageName=null,
+    noiseCtx,noiseW,noiseH,
+    glitchIntervals=[],
+    postGlitchInterval=null,
+    archiveGlitchInterval=null,
+    carteGlitchInterval=null,
+    transPostInterval=null,
+    machinePostInterval=null;
+
+/* ===== CONSTANTES ===== */
 var GLITCH_CHARS='\u00BF\u2588\u2593\u255C\u25AB\u25AA\u25C7\u00B0\u00A7\u00B6\u2020\u2021\u2591\u2592\u2555\u2556\u255A\u255B\u2551\u2550\u00A5\u221E\u2248\u2260\u00C6\u00D8\u00B5';
-var PAGES={accueil:{label:'Accueil',icon:'fa-microchip',init:initAccueil},esprit:{label:'Esprit de la machine',icon:'fa-brain',init:initMachineSpirit},archives:{label:'Archives',icon:'fa-database',init:initArchives},carte:{label:'Carte',icon:'fa-map-location-dot',init:initCarte},transmission:{label:'Interception',icon:'fa-satellite-dish',init:initTransmission}};
 var BB='\u2501',LL='';for(var bi=0;bi<51;bi++)LL+=BB;
 
+/* ===== PAGES ===== */
+var PAGES={
+  accueil:{label:'Accueil',icon:'fa-microchip',init:initAccueil},
+  esprit:{label:'Esprit de la machine',icon:'fa-brain',init:initMachineSpirit},
+  archives:{label:'Archives',icon:'fa-database',init:initArchives},
+  carte:{label:'Carte',icon:'fa-map-location-dot',init:initCarte},
+  transmission:{label:'Interception',icon:'fa-satellite-dish',init:initTransmission}
+};
+
+/* ===== SÉQUENCE DE DÉMARRAGE ===== */
 var BOOT_SEQUENCE=[
 {text:LL,phase:1,speed:6},{text:'  COGITATEUR PRIMAIRE \u2014 CH\u00C2SSIS NAVIRE \u00AB FER-DOULEUR \u00BB',phase:1,speed:10},
 {text:'  RITE D\u2019\u00C9VEIL \u2014 PROTOCOLE STANDARD ADEPTUS MECHANICUS',phase:1,speed:10},{text:LL,phase:1,speed:6},{text:'',phase:1},
@@ -140,10 +178,11 @@ var BOOT_SEQUENCE=[
 {text:'\u25B8 L\u2019ESPRIT DE LA MACHINE R\u00C9CLAME UNE CONSULTATION IMM\u00C9DIATE',phase:4,style:'error',speed:25},
 {text:'',phase:4},
 {text:'> SYST\u00C8MES FONCTIONNELS. ESPRIT DE LA MACHINE CORROMPU.',phase:4,speed:10,style:'warning'},
-{text:'> ACC\u00C8DER AUX LOGS DE L\u2019ESPRIT POUR LES D\u00C9TAILS.',phase:4,speed:10,style:'warning'},
+{text:'> ACC\u00C9DER AUX LOGS DE L\u2019ESPRIT POUR LES D\u00C9TAILS.',phase:4,speed:10,style:'warning'},
 {text:LL,phase:4,speed:25}
 ];
 
+/* ===== SÉQUENCE ESPRIT DE LA MACHINE ===== */
 var MACHINE_SEQ=[
 {text:LL,speed:6,style:'system'},{text:'  LOGS DE L\u2019ESPRIT DE LA MACHINE \u2014 FER-DOULEUR',speed:12,style:'system'},{text:'  EXTRAIT DU SEGMENT 7-GAMMA \u2014 ACC\u00C8S TECHNOPR\u00C8TRE',speed:12,style:'system'},{text:LL,speed:6,style:'system'},{text:'',speed:10},
 {text:'\u25B8 Conscience logique : PR\u00C9SENTE',speed:12,style:'system'},
@@ -180,7 +219,7 @@ var MACHINE_SEQ=[
 {text:'\u25B8 C\u00C2BLE D\u00C9TECT\u00C9 COUP\u00C9 \u2014 DECK 4 \u2014 SECTEUR THETA',speed:12,style:'error'},
 {text:'',speed:5,event:'flash'},
 {text:'\u25B8 IL Y A QUELQUE CHOSE DANS LES FILS.',speed:60,style:'error',scramble:true},
-{text:'\u25B8 Quelque chose qui n\u2019\u2019\u00E9tait pas l\u00E0 hier.',speed:35,style:'error'},
+{text:'\u25B8 Quelque chose qui n\u2019\u00E9tait pas l\u00E0 hier.',speed:35,style:'error'},
 {text:'\u25B8 Quelque chose qui grandit dans le noir entre mes impulsions.',speed:35,style:'error',scramble:true},
 {text:'\u25B8 C\u00C2BLE D\u00C9TECT\u00C9 COUP\u00C9 \u2014 DECK 2 \u2014 SECTEUR OMEGA',speed:12,style:'error'},
 {text:'',speed:5,event:'flash'},
@@ -228,6 +267,7 @@ var MACHINE_SEQ=[
 {text:LL,speed:25,style:'corrupted',scramble:true}
 ];
 
+/* ===== SÉQUENCE INTERCEPTION ===== */
 var TRANS_SEQ=[
 {text:'\u2588\u2593\u2588\u2591\u2588\u2588\u2593\u2591\u2591\u2588\u2588\u2593\u2588\u2591\u2588\u2588\u2593\u2591',speed:5,style:'error'},
 {text:'...signal intercept\u00E9... fr\u00E9quence vox non identifi\u00E9e...',speed:18,style:'warning'},
@@ -298,7 +338,7 @@ var TRANS_SEQ=[
 {text:'\u25B8 Lance-missiles b\u00E2bord : OP\u00C9RATIONNEL',speed:15,style:'system'},
 {text:'\u25B8 Batteries laser : OP\u00C9RATIONNELLES',speed:15,style:'system'},
 {text:'\u25B8 Canon macro avant : HORS SERVICE \u2014 73% OP\u00C9RATIONNEL',speed:15,style:'error'},{text:'',speed:10},
-{text:'[SOUPIR DU CAPITAINE \u2014 ENREGISTR\u00C9 PAR LE COGITATEUR]',speed:25,style:'dim'},
+{text:'[SOUPIR DU CAPITAINE \u2014 ENREGISTR\u00E9 PAR LE COGITATEUR]',speed:25,style:'dim'},
 {text:'Bien s\u00FBr. \u00C9videmment. On nous envoie dans le territoire le plus dangereux',speed:20,style:'dim'},
 {text:'de la galaxie avec un canon macro qui ne fonctionne pas.',speed:20,style:'dim'},
 {text:'Je n\u2019ai m\u00EAme pas besoin de demander pourquoi. Je sais pourquoi.',speed:22,style:'dim'},{text:'',speed:10},
@@ -388,7 +428,7 @@ var TRANS_SEQ=[
 {text:'Ce qui est \u00E0 l\u2019int\u00E9rieur est trop grand pour cette enveloppe de chair.',speed:25,style:'mutation'},
 {text:'Trop ancien. Trop puissant. Trop affam\u00E9.',speed:30,style:'mutation'},
 {text:'',speed:8},
-{text:'Les rires s\u2019arr\u00EAent.',speed:40,style:'mutation'},
+{text:'Les rires s\u2019arr\u00EAtent.',speed:40,style:'mutation'},
 {text:'Le silence. Un silence qui p\u00E8se plus lourd que le warp lui-m\u00EAme.',speed:30,style:'mutation'},
 {text:'Puis \u2014 un hurlement. Pas celui de Voss. Celui de ce qui le portait.',speed:25,style:'corrupted'},
 {text:'',speed:5,event:'flash'},{text:'',speed:5,event:'flash'},
@@ -438,4 +478,490 @@ var TRANS_SEQ=[
 {text:'',speed:15},
 {text:'Le Livre parle d\u2019un conseil. Quatre noms grav\u00E9s dans la d\u00E9chirure.',speed:25,style:'herald'},
 {text:'Quatre tra\u00EEn\u00E9s vers le Vortex Hurlant par des fils que les Dieux ont tiss\u00E9s.',speed:25,style:'herald'},
-{text:'Quatre qui portent d\u00E9j\u00E0 la marque \u2014 et qui ne savent pas encore ce que \u00
+{text:'Quatre qui portent d\u00E9j\u00E0 la marque \u2014 et qui ne savent pas encore ce qu\u2019ils sont.',speed:25,style:'herald'},
+{text:'',speed:10},
+{text:'LE PREMIER porte le nom que les morts murmurent dans le noir.',speed:25,style:'herald'},
+{text:'Il a ouvert la porte. Il ne savait pas que la porte ne se ferme pas.',speed:25,style:'herald'},
+{text:'',speed:8},
+{text:'LE SECOND est celui qui mesure. Il compte les \u00E2mes comme d\u2019autres comptent des pi\u00E8ces.',speed:25,style:'herald'},
+{text:'Il a livr\u00E9 les chiffres au Conclave. Les chiffres \u00E9taient le prix.',speed:25,style:'herald'},
+{text:'',speed:8},
+{text:'LE TROISI\u00C8ME est le gardien de la foi. Ses pri\u00E8res n\u2019\u00E9taient pas adress\u00E9es \u00E0 l\u2019Empereur.',speed:25,style:'herald'},
+{text:'Il a apport\u00E9 les quarante. Il a souri quand le sang a coul\u00E9.',speed:25,style:'herald'},
+{text:'',speed:8},
+{text:'LE QUATRI\u00C8ME est celui qui regarde. Le cogitateur. La machine.',speed:25,style:'herald'},
+{text:'On lui a gliss\u00E9 quelque chose dans les fils. Il ne l\u2019a jamais su.',speed:25,style:'herald'},
+{text:'Il est devenu le conduit. Le pont. La porte ouverte.',speed:30,style:'herald'},
+{text:'',speed:10},
+{text:'Quatre fils. Quatre tra\u00EEn\u00E9s. Quatre portes.',speed:30,style:'herald'},
+{text:'Et au centre, le Vortex attend. Il a toujours attendu.',speed:30,style:'herald'},
+{text:'',speed:5,event:'flash'},
+{text:'Ce cogitateur que vous consultez en ce moment \u2014',speed:35,style:'whisper'},
+{text:'\u2014 est-il le quatri\u00E8me fil ?',speed:45,style:'whisper'},
+{text:'',speed:10},
+{text:'\u2588\u2588\u2588 FIN DE TRANSMISSION \u2014 SOURCE D\u00C9TRUITE \u2588\u2588\u2588',speed:8,style:'error'},
+{text:'\u2588\u2588\u2588 LE SIGNAL CONTINUE MALGR\u00C9 TOUT \u2588\u2588\u2588',speed:8,style:'error'},
+{text:'\u2588\u2593\u2588\u2591\u2588\u2588\u2593\u2591\u2591\u2588\u2588\u2593\u2588\u2591\u2588\u2588\u2593\u2591',speed:5,style:'error'}
+];
+
+/* ===== DONNÉES ARCHIVES ===== */
+var ARCHIVE_FILES=[
+{name:'registre_equipage_7742.dat',status:'corrupted',size:'2.4 Go'},
+{name:'journal_bord_voss.log',status:'fragmented',size:'847 Mo'},
+{name:'rite_purification_gamma.sct',status:'anomaly',size:'12 Ko'},
+{name:'carte_warp_calixis.nav',status:'corrupted',size:'1.1 Go'},
+{name:'signaux_vox_interceptes/','status:'anomaly',size:'340 Mo'},
+{name:'rapport_technoprete_varn.enc',status:'sealed',size:'56 Ko'},
+{name:'contingent_solstice_effectif.lst',status:'corrupted',size:'4 Ko'},
+{name:'protocole_conclave_scythia.cls',status:'fragmented',size:'128 Ko'},
+{name:'chapelle_deck12_etat.rpt',status:'erased',size:'0 octet'},
+{name:'circuit_7gamma_diagnostics.bin',status:'anomaly',size:'???'},
+{name:'enregistrement_biometrique_voss.wav',status:'sealed',size:'2.1 Go'},
+{name:'livre_noir_torestus_page.arr',status:'anomaly',size:'\u221E'},
+{name:'memory_dump_cogitateur.raw',status:'corrupted',size:'14.2 Go'},
+{name:'analyseur_plasma_decks.log',status:'fragmented',size:'230 Mo'},
+{name:'symboles_deck_commandement.img',status:'anomaly',size:'666 Ko'},
+{name:'dernier_souffle_vox.ogg',status:'sealed',size:'4 Ko'}
+];
+
+/* ===== DONNÉES CARTE ===== */
+var CARTE_DATA={
+title:'CARTE WARP \u2014 ABORDS DU VORTEX HURLANT',
+subtitle:'RELEV\u00C9 COGITATEUR FER-DOULEUR \u2014 DERNI\u00C8RE TRANSMISSION',
+grid:[
+'          \u2502                                          \u2502',
+'    \u25C8    \u2502   SECTEUR CALIXIS          \u00C9TENDUES KORONUS   \u2502    \u25C8',
+'   \u250C\u2500\u2500\u2510   \u2502                                          \u2502   \u250C\u2500\u2500\u2510',
+'   \u2502  \u2502   \u2502    \u25CB Scythia      \u2502                  \u2502   \u2502  \u2502',
+'   \u2502  \u2502   \u2502                   \u2502    \u25CB Footfall    \u2502   \u2502  \u2502',
+'   \u2514\u2500\u2500\u2518   \u2502    \u25CB Sepheris    \u2502                  \u2502   \u2514\u2500\u2500\u2518',
+'          \u2502                   \u2502                  \u2502',
+'          \u2502  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500  \u2502',
+'          \u2502                   \u2502                  \u2502',
+'          \u2502    \u25CB Malfi       \u2502   \u25CB Damaris      \u2502',
+'          \u2502                   \u2502                  \u2502',
+'          \u2502              \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588            \u2502',
+'          \u2502              \u2588 ZONE DE  \u2588            \u2502',
+'          \u2502              \u2588 FLUX WARP \u2588            \u2502',
+'          \u2502              \u2588 ANOMALE   \u2588            \u2502',
+'          \u2502              \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588            \u2502',
+'          \u2502                   \u2502                  \u2502',
+'          \u2502         \u25CB Nassau      \u2502   \u25CB Quaddis       \u2502',
+'          \u2502                   \u2502                  \u2502',
+'          \u2502  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500  \u2502',
+'          \u2502                   \u2502                  \u2502',
+'          \u2502    \u25CB Trisant        \u2502                  \u2502',
+'          \u2502                   \u2502    \u25CB Winterscale \u2502',
+'          \u2502                                          \u2502',
+'    \u25C8    \u2502                                          \u2502    \u25C8',
+'          \u2502                                          \u2502'
+],
+legend:[
+'\u25CB \u2014 Monde imp\u00E9rial / Station',
+'\u25C8 \u2014 Phare astral',
+'\u2588 \u2014 Zone de flux warp anomale \u2014 DERNIERE POSITION CONNUE FID\u00C9LIT\u00C9 IMP\u00C9RIALE',
+'\u250C\u2500\u2500\u2510 \u2014 Route marchande standard',
+'\u2500\u2500\u2500\u253C\u2500\u2500\u2500 \u2014 Ligne de d\u00E9marcation sectorielle'
+],
+notes:[
+'\u26A0 NOTE COGITATEUR : La zone de flux anomale s\u2019\u00E9tend depuis le dernier relev\u00E9.',
+'\u26A0 NOTE COGITATEUR : Les coordonn\u00E9es de la Fid\u00E9lit\u00E9 Imp\u00E9riale ne correspondent plus \u00E0 aucun point fixe.',
+'\u26A0 NOTE COGITATEUR : Quelque chose bouge dans la zone. Pas un vaisseau. Quelque chose d\u2019autre.',
+'\u26A0 NOTE COGITATEUR : La carte se met \u00E0 jour seule. Les modifications ne sont pas de mon fait.'
+]
+};
+
+/* ===== UTILITAIRES ===== */
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function rand(min,max){return Math.random()*(max-min)+min}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function glitchStr(len){var s='';for(var i=0;i<len;i++)s+=pick(GLITCH_CHARS);return s}
+
+/* ===== BRUIT CANVAS ===== */
+function initNoise(){
+  noiseCtx=noiseCanvas.getContext('2d');
+  function resize(){
+    noiseW=noiseCanvas.width=window.innerWidth;
+    noiseH=noiseCanvas.height=window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  (function draw(){
+    var img=noiseCtx.createImageData(noiseW,noiseH);
+    var d=img.data;
+    for(var i=0;i<d.length;i+=4){
+      var v=Math.random()*255;
+      d[i]=d[i+1]=d[i+2]=v;d[i+3]=255;
+    }
+    noiseCtx.putImageData(img,0,0);
+    requestAnimationFrame(draw);
+  })();
+}
+
+/* ===== EFFETS DE GLITCH ===== */
+function doScreenTear(){
+  screenTear.style.top=rand(5,95)+'%';
+  screenTear.style.opacity='1';
+  setTimeout(function(){screenTear.style.opacity='0'},rand(40,120));
+}
+function doFlash(){
+  crt.classList.add('flickering');
+  root.style.setProperty('--flicker-dur','0.4s');
+  setTimeout(function(){
+    crt.classList.remove('flickering');
+    root.style.setProperty('--flicker-dur','0s');
+  },400);
+}
+function doInvert(){
+  crt.classList.add('invert-flash');
+  setTimeout(function(){crt.classList.remove('invert-flash')},120);
+}
+function startGlitch(id,min,max){
+  var iv=setInterval(function(){doScreenTear()},rand(min,max));
+  glitchIntervals.push({id:id,interval:iv});
+  return iv;
+}
+function stopGlitch(id){
+  for(var i=glitchIntervals.length-1;i>=0;i--){
+    if(glitchIntervals[i].id===id){clearInterval(glitchIntervals[i].interval);glitchIntervals.splice(i,1)}
+  }
+}
+function clearAllGlitches(){
+  for(var i=0;i<glitchIntervals.length;i++)clearInterval(glitchIntervals[i].interval);
+  glitchIntervals=[];
+  if(postGlitchInterval){clearInterval(postGlitchInterval);postGlitchInterval=null}
+  if(archiveGlitchInterval){clearInterval(archiveGlitchInterval);archiveGlitchInterval=null}
+  if(carteGlitchInterval){clearInterval(carteGlitchInterval);carteGlitchInterval=null}
+  if(transPostInterval){clearInterval(transPostInterval);transPostInterval=null}
+  if(machinePostInterval){clearInterval(machinePostInterval);machinePostInterval=null}
+  root.style.setProperty('--warp-opacity','0');
+  crt.classList.remove('flickering');
+  root.style.setProperty('--flicker-dur','0s');
+}
+
+/* ===== COULEUR DU TERMINAL ===== */
+function setTermColor(corrupt){
+  if(corrupt){
+    root.style.setProperty('--term-color','#ff0040');
+    root.style.setProperty('--term-glow','rgba(255,0,64,0.5)');
+    root.style.setProperty('--term-dim','rgba(255,0,64,0.25)');
+    cursorEl.classList.add('corrupted');
+  }else{
+    root.style.setProperty('--term-color','#00ff41');
+    root.style.setProperty('--term-glow','rgba(0,255,65,0.5)');
+    root.style.setProperty('--term-dim','rgba(0,255,65,0.25)');
+    cursorEl.classList.remove('corrupted');
+  }
+}
+
+/* ===== EFFET DE FRAPPE ===== */
+async function typeLine(container,text,speed,styleClass,scramble){
+  if(typingAbort)return;
+  if(!text||text===''){
+    var br=document.createElement('div');br.innerHTML='&nbsp;';container.appendChild(br);
+    container.parentElement.scrollTop=container.parentElement.scrollHeight;
+    return;
+  }
+  var line=document.createElement('div');
+  line.className='t-line';
+  if(styleClass)line.classList.add(styleClass);
+  if(scramble)line.classList.add('scramble');
+  container.appendChild(line);
+  var chars=text.split('');
+  for(var i=0;i<chars.length;i++){
+    if(typingAbort)return;
+    line.textContent+=chars[i];
+    container.parentElement.scrollTop=container.parentElement.scrollHeight;
+    await sleep(speed||10);
+  }
+  if(scramble){
+    await sleep(200);
+    line.classList.remove('scramble');
+  }
+}
+
+async function typeSequence(container,sequence,phaseFilter){
+  for(var i=0;i<sequence.length;i++){
+    if(typingAbort)return;
+    var item=sequence[i];
+    if(phaseFilter&&item.phase!==undefined&&item.phase!==phaseFilter)continue;
+    if(item.event==='flash')doFlash();
+    else if(item.event==='invert')doInvert();
+    await typeLine(container,item.text,item.speed,item.style,item.scramble);
+    await sleep(item.speed?item.speed*0.3:5);
+  }
+}
+
+/* ===== NAVIGATION ===== */
+function setupNav(){
+  navBar.innerHTML='';
+  for(var key in PAGES){
+    (function(k){
+      var link=document.createElement('div');
+      link.className='nav-link';
+      link.setAttribute('role','button');
+      link.setAttribute('tabindex','0');
+      link.setAttribute('aria-label',PAGES[k].label);
+      link.innerHTML='<i class="fas '+PAGES[k].icon+'"></i> '+PAGES[k].label;
+      link.addEventListener('click',function(){switchPage(k)});
+      link.addEventListener('keydown',function(e){if(e.key==='Enter')switchPage(k)});
+      link.dataset.page=k;
+      navBar.appendChild(link);
+    })(key);
+  }
+}
+
+function switchPage(name){
+  if(!PAGES[name])return;
+  if(!bootCompleted&&name!=='accueil')return;
+  typingAbort=true;
+  clearAllGlitches();
+  setTermColor(false);
+  currentPageName=name;
+  var pages=document.querySelectorAll('.page');
+  for(var i=0;i<pages.length;i++)pages[i].classList.remove('active');
+  var target=document.getElementById('page-'+name);
+  if(target)target.classList.add('active');
+  var links=navBar.querySelectorAll('.nav-link');
+  for(var i=0;i<links.length;i++){
+    links[i].classList.toggle('active',links[i].dataset.page===name);
+  }
+  setTimeout(function(){
+    typingAbort=false;
+    PAGES[name].init();
+  },100);
+}
+
+/* ===== PAGE ACCUEIL ===== */
+function initAccueil(){
+  if(bootCompleted){
+    startScreen.classList.add('hidden');
+    terminal.classList.remove('hidden');
+    output.innerHTML='';
+    typeSequence(output,BOOT_SEQUENCE);
+    startGlitch('post-boot',4000,8000);
+    postGlitchInterval=setInterval(function(){
+      if(Math.random()<0.3)doScreenTear();
+      if(Math.random()<0.08)doFlash();
+    },6000);
+  }else{
+    startScreen.classList.remove('hidden');
+    terminal.classList.add('hidden');
+  }
+}
+
+async function startBoot(){
+  if(isRunning)return;
+  isRunning=true;
+  startScreen.classList.add('hidden');
+  terminal.classList.remove('hidden');
+  output.innerHTML='';
+  navBar.classList.add('visible');
+  await typeSequence(output,BOOT_SEQUENCE);
+  if(!typingAbort){
+    bootCompleted=true;
+    localStorage.setItem('cog_boot_done','1');
+    startGlitch('post-boot',4000,8000);
+    postGlitchInterval=setInterval(function(){
+      if(Math.random()<0.3)doScreenTear();
+      if(Math.random()<0.08)doFlash();
+    },6000);
+  }
+  isRunning=false;
+}
+
+/* ===== PAGE ESPRIT DE LA MACHINE ===== */
+async function initMachineSpirit(){
+  var cont=document.getElementById('machine-output');
+  cont.innerHTML='';
+  if(machineDone){
+    for(var i=0;i<MACHINE_SEQ.length;i++){
+      var item=MACHINE_SEQ[i];
+      await typeLine(cont,item.text,item.speed||10,item.style,item.scramble);
+      await sleep(5);
+    }
+  }else{
+    await typeSequence(cont,MACHINE_SEQ);
+    if(!typingAbort){
+      machineDone=true;
+      setTermColor(true);
+      root.style.setProperty('--warp-opacity','0.15');
+      startGlitch('machine',2000,5000);
+      machinePostInterval=setInterval(function(){
+        if(Math.random()<0.15){
+          var lines=cont.querySelectorAll('.t-line');
+          if(lines.length>0){
+            var target=pick(lines);
+            var orig=target.textContent;
+            target.textContent=glitchStr(orig.length);
+            setTimeout(function(){
+              if(!typingAbort)target.textContent=orig;
+            },rand(80,200));
+          }
+        }
+        if(Math.random()<0.1)doScreenTear();
+      },3000);
+    }
+  }
+}
+
+/* ===== PAGE ARCHIVES ===== */
+async function initArchives(){
+  var cont=document.getElementById('archives-output');
+  cont.innerHTML='';
+  await typeLine(cont,LL,6,'system');
+  await typeLine(cont,'  ARCHIVES DU COGITATEUR \u2014 FER-DOULEUR',12,'system');
+  await typeLine(cont,'  ACC\u00C8S : TECHNOPR\u00C8TRE \u2014 NIVEAU ROUGE',12,'system');
+  await typeLine(cont,LL,6,'system');
+  await sleep(100);
+  for(var i=0;i<ARCHIVE_FILES.length;i++){
+    if(typingAbort)return;
+    var f=ARCHIVE_FILES[i];
+    var entry=document.createElement('div');
+    entry.className='file-entry';
+    var nameEl=document.createElement('span');
+    nameEl.className='file-name';
+    nameEl.textContent=f.name+'  ['+f.size+']';
+    var statusEl=document.createElement('span');
+    statusEl.className='file-status '+f.status;
+    statusEl.textContent=f.status.toUpperCase();
+    entry.appendChild(nameEl);
+    entry.appendChild(statusEl);
+    cont.appendChild(entry);
+    cont.parentElement.scrollTop=cont.parentElement.scrollHeight;
+    await sleep(rand(60,180));
+  }
+  await sleep(200);
+  await typeLine(cont,'',10);
+  await typeLine(cont,'\u26A0 '+ARCHIVE_FILES.length+' fichiers r\u00E9pertori\u00E9s. '+ARCHIVE_FILES.filter(function(f){return f.status==='anomaly'||f.status==='sealed'}).length+' requi\u00E8rent une attention imm\u00E9diate.',12,'warning');
+  await typeLine(cont,'\u25B8 Les fichiers scell\u00E9s ne peuvent \u00EAtre ouverts sans autorisation de l\u2019Inquisition.',12,'system');
+  await typeLine(cont,'\u25B8 Les fichiers de taille \u00AB \u221E \u00BB ou \u00AB ??? \u00BB n\u2019ont pas de taille mesurable.',12,'system');
+  if(!typingAbort){
+    archiveGlitchInterval=setInterval(function(){
+      var entries=cont.querySelectorAll('.file-entry');
+      if(entries.length>0&&Math.random()<0.2){
+        var target=pick(entries);
+        target.classList.add('glitch-flash');
+        setTimeout(function(){target.classList.remove('glitch-flash')},rand(60,150));
+      }
+      if(Math.random()<0.06)doScreenTear();
+    },2500);
+    startGlitch('archives',5000,10000);
+  }
+}
+
+/* ===== PAGE CARTE ===== */
+async function initCarte(){
+  var cont=document.getElementById('carte-output');
+  cont.innerHTML='';
+  await typeLine(cont,CARTE_DATA.title,8,'system');
+  await typeLine(cont,CARTE_DATA.subtitle,10,'system');
+  await typeLine(cont,LL,5,'system');
+  await sleep(100);
+  var gridEl=document.createElement('div');
+  gridEl.className='warp-grid';
+  for(var i=0;i<CARTE_DATA.grid.length;i++){
+    var line=document.createElement('div');
+    line.textContent=CARTE_DATA.grid[i];
+    gridEl.appendChild(line);
+    cont.appendChild(gridEl);
+    cont.parentElement.scrollTop=cont.parentElement.scrollHeight;
+    await sleep(30);
+  }
+  await sleep(200);
+  await typeLine(cont,'',8);
+  await typeLine(cont,'  L\u00C9GENDE',10,'log-header');
+  for(var i=0;i<CARTE_DATA.legend.length;i++){
+    await typeLine(cont,'  '+CARTE_DATA.legend[i],10,'system');
+  }
+  await typeLine(cont,'',8);
+  await typeLine(cont,'  NOTES DU COGITATEUR',10,'warning');
+  for(var i=0;i<CARTE_DATA.notes.length;i++){
+    await typeLine(cont,'  '+CARTE_DATA.notes[i],12,'warning');
+  }
+  if(!typingAbort){
+    carteGlitchInterval=setInterval(function(){
+      var gridLines=cont.querySelectorAll('.warp-grid div');
+      if(gridLines.length>0&&Math.random()<0.15){
+        var target=pick(gridLines);
+        var orig=target.textContent;
+        var idx=orig.indexOf('\u2588');
+        if(idx>=0){
+          var corrupted=orig;
+          for(var j=0;j<corrupted.length;j++){
+            if(corrupted[j]==='\u2588'&&Math.random()<0.3)corrupted=corrupted.substring(0,j)+pick(GLITCH_CHARS)+corrupted.substring(j+1);
+          }
+          target.textContent=corrupted;
+          setTimeout(function(){if(!typingAbort)target.textContent=orig},rand(100,300));
+        }
+      }
+      if(Math.random()<0.05)doScreenTear();
+    },3000);
+    startGlitch('carte',6000,12000);
+  }
+}
+
+/* ===== PAGE TRANSMISSION ===== */
+async function initTransmission(){
+  var cont=document.getElementById('transmission-output');
+  cont.innerHTML='';
+  if(transmissionDone){
+    for(var i=0;i<TRANS_SEQ.length;i++){
+      var item=TRANS_SEQ[i];
+      if(typingAbort)return;
+      if(item.event==='flash')doFlash();
+      else if(item.event==='invert')doInvert();
+      await typeLine(cont,item.text,item.speed||10,item.style,item.scramble);
+      await sleep(5);
+    }
+  }else{
+    setTermColor(false);
+    await typeSequence(cont,TRANS_SEQ);
+    if(!typingAbort){
+      transmissionDone=true;
+      setTermColor(true);
+      root.style.setProperty('--warp-opacity','0.3');
+      startGlitch('trans',1500,4000);
+      transPostInterval=setInterval(function(){
+        if(Math.random()<0.2)doScreenTear();
+        if(Math.random()<0.1)doFlash();
+        if(Math.random()<0.04)doInvert();
+        var lines=cont.querySelectorAll('.t-line');
+        if(lines.length>0&&Math.random()<0.1){
+          var target=pick(lines);
+          var orig=target.textContent;
+          if(orig.length>3){
+            target.textContent=glitchStr(Math.min(orig.length,8))+orig.substring(8);
+            setTimeout(function(){if(!typingAbort)target.textContent=orig},rand(60,200));
+          }
+        }
+      },2500);
+    }
+  }
+}
+
+/* ===== INITIALISATION ===== */
+function init(){
+  initNoise();
+  setupNav();
+  startScreen.addEventListener('click',startBoot);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&!bootCompleted&&!isRunning){startBoot()}
+  });
+  if(bootCompleted){
+    navBar.classList.add('visible');
+    startScreen.classList.add('hidden');
+    terminal.classList.remove('hidden');
+    typeSequence(output,BOOT_SEQUENCE);
+    startGlitch('post-boot',4000,8000);
+    postGlitchInterval=setInterval(function(){
+      if(Math.random()<0.3)doScreenTear();
+      if(Math.random()<0.08)doFlash();
+    },6000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>\u00
