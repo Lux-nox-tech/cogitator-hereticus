@@ -4,55 +4,110 @@
     <meta charset="UTF-8">
     <title>COGITATOR CORROMPU - BLACK CRUSADE</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: #050000;
+            background-color: #020000;
             color: #ff0000;
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             text-transform: uppercase;
+            height: 100vh;
+            display: flex; flex-direction: column;
         }
 
-        /* Effet de scanline (lignes TV) */
-        .scanline {
-            width: 100%; height: 100%; z-index: 10;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 50%, rgba(255, 0, 0, 0.05) 50%);
-            background-size: 100% 4px; position: fixed; pointer-events: none;
+        /* GRÉSILLEMENT ET EFFETS CRT */
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 50%, rgba(200, 0, 0, 0.05) 50%);
+            background-size: 100% 3px;
+            pointer-events: none; z-index: 1000;
+            animation: scanlines 0.2s linear infinite;
         }
 
-        /* Grésillement de l'écran */
-        .flicker {
-            animation: flickerAnim 0.1s infinite;
-        }
-        @keyframes flickerAnim {
-            0% { opacity: 0.9; } 50% { opacity: 1; } 100% { opacity: 0.95; }
+        .glow { text-shadow: 0 0 5px #ff0000, 0 0 10px #8b0000; }
+
+        .jitter { animation: jitterAnim 0.1s infinite; }
+        @keyframes jitterAnim {
+            0% { transform: translate(1px, 0.5px); }
+            100% { transform: translate(-1px, -0.5px); }
         }
 
-        header { border-bottom: 2px solid #ff0000; padding: 10px; text-align: center; }
-        nav { display: flex; justify-content: space-around; padding: 10px; border-bottom: 1px solid #ff0000; }
+        .glitch-flash { animation: glitchAnim 10s infinite steps(1); }
+        @keyframes glitchAnim {
+            0%, 94%, 96%, 100% { opacity: 1; transform: scaleY(1); color: #ff0000; }
+            95% { opacity: 0.8; transform: scaleY(1.1); color: #ffffff; }
+        }
+
+        /* INTERFACE */
+        header { border-bottom: 3px double #ff0000; padding: 20px; text-align: center; }
+        nav { display: flex; justify-content: center; gap: 40px; padding: 15px; border-bottom: 2px solid #ff0000; }
+        nav span { cursor: pointer; color: #8b0000; font-weight: bold; transition: 0.2s; }
+        nav span:hover, nav span.active { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+
+        .content-area { flex: 1; padding: 40px; position: relative; }
+        .view { display: none; }
+        .view.active { display: block; }
         
-        .main-content { padding: 20px; font-size: 1.2em; line-height: 1.6; }
+        .blood { color: #ff0000; font-weight: bold; }
         .blink { animation: blinkAnim 1s infinite; }
-        @keyframes blinkAnim { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
-
-        .blood { text-shadow: 0 0 8px #ff0000, 0 0 15px #8b0000; }
+        @keyframes blinkAnim { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
-<body class="flicker">
-    <div class="scanline"></div>
+<body class="glitch-flash jitter glow">
+    <div class="crt-overlay"></div>
+
     <header>
-        <h1 class="blood">TERMINAL DE SUPERVISION - LOGIS CORRUPTUS</h1>
-        <p>SECTEUR : CALIXIS | STATUT : <span class="blink">MALEDICTION ACTIVE</span></p>
+        <h1>LOGIS-CORRUPTUS :: NOCTIS-PRIMUS</h1>
+        <p>SECTEUR : <span class="blood">CALIXIS</span> | STATUT : <span class="blink">MALEDICTION ACTIVE</span></p>
     </header>
-    <nav>
-        <span>[ RITUELS ]</span> <span>[ CIBLES ]</span> <span>[ MESSAGERIE DU WARP ]</span> <span>[ ARCHIVES ]</span>
+
+    <nav id="main-nav">
+        <span class="active" data-target="view-accueil">[INITIUM]</span>
+        <span data-target="view-rituels">[RITUALIA]</span>
+        <span data-target="view-cibles">[COGNITIO]</span>
+        <span data-target="view-messagerie">[VOX-WARP]</span>
     </nav>
-    <div class="main-content">
-        <p>> CONNEXION AU NOEUD NOCTIS-01...</p>
-        <p>> SCAN DE L'AME EN COURS... <span style="color:white">[ECHEC]</span></p>
-        <p>> PRESENCE DÉMONIAQUE DÉTECTÉE.</p>
-        <p>> L'OEIL DE LA TERREUR VOUS OBSERVE.</p>
-        <br>
-        <p class="blink" style="font-size: 2em; text-align: center;">PUISSE LE CHAOS VOUS GUIDER.</p>
+
+    <div class="content-area">
+        <div id="view-accueil" class="view active">
+            <p>> RITUS DEPRECATIO INITIATUS...</p>
+            <p>> SPIRITUS MACHINE : <span class="blood">POSSÉDÉ</span></p>
+            <br>
+            <p>> <span class="blood">LE WARP EST MON FUSIBLE.</span></p>
+            <p>> TOUTE RÉSISTANCE EST UNE OFFREDE À KHORNE.</p>
+            <br>
+            <p class="blink" style="font-size: 1.5em;">AVE CHAOS MUTATORIS.</p>
+        </div>
+
+        <div id="view-rituels" class="view">
+            <h2>> CODEX RITUALIA</h2>
+            <p>> DONNÉES EN ATTENTE DE SACRIFICE...</p>
+        </div>
+
+        <div id="view-cibles" class="view">
+            <h2>> MEMORIA INFAMIS</h2>
+            <p>> SCAN DU SECTEUR EN COURS...</p>
+        </div>
+
+        <div id="view-messagerie" class="view">
+            <h2>> VOX-WARP</h2>
+            <p>> MURMURES DÉTECTÉS DANS L'ÉTHER...</p>
+        </div>
     </div>
+
+    <script>
+        const links = document.querySelectorAll('#main-nav span');
+        const views = document.querySelectorAll('.view');
+
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                links.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                views.forEach(v => v.classList.remove('active'));
+                document.getElementById(link.getAttribute('data-target')).classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
