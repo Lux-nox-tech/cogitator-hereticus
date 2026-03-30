@@ -820,9 +820,10 @@ if(startHash&&PAGES[startHash]){
   glitchIntervals.push(setInterval(function(){if(Math.random()<.25)triggerScreenTear();},3000));
   PAGES[startHash].init();
 } else {
-  // Page d'accueil par d\u00e9faut
+  // Page d'accueil par défaut
   currentPageName='accueil';
   updateActiveNav();
+  document.getElementById('page-accueil').classList.add('active');
   initAccueil();
 }
 </script>
